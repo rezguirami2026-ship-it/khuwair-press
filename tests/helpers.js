@@ -85,6 +85,9 @@ export function overlaps(boxes){
   for(let i = 0; i < boxes.length; i++) for(let j = i + 1; j < boxes.length; j++){
     const a = boxes[i], b = boxes[j];
     if(a.name + '-in' === b.name || b.name + '-in' === a.name) continue;
+    // '~' boxes are keep-out zones of decoration: only text and content may not enter them
+    const zone = n => n.startsWith('~'), decor = n => zone(n) || n === 'award' || n === 'emblem';
+    if((zone(a.name) && decor(b.name)) || (zone(b.name) && decor(a.name))) continue;
     const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), oy = Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y);
     if(ox > eps && oy > eps) out.push(`${a.name}[${a.x.toFixed(0)},${a.y.toFixed(0)},${a.w.toFixed(0)}×${a.h.toFixed(0)}] ∩ ${b.name}[${b.x.toFixed(0)},${b.y.toFixed(0)},${b.w.toFixed(0)}×${b.h.toFixed(0)}]`);
   }

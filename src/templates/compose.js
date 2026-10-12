@@ -19,13 +19,14 @@ export function certificate(skin, opt){
   return function(ctx, d, rec, th){
     const W = 1000, H = 707, S = env.state.school;
     const box = skin.page(ctx, W, H, th);
+    if(skin.cornerAward){ skin.cornerAward(ctx, W, H, th); mark('award', 72, 72, 112, 136); }
     const hb = header(ctx, skin, th, box, 1, {emblem:!skin.hero});
     // bottom zone — right: an optional extra signer, otherwise the date; centre: the award; left: director + stamp
     const sigImg = !!env.logos.signature, extra = has(d.teacherLabel) || has(d.teacherName);
     const rightLabel = extra ? d.teacherLabel : (has(d.date) ? 'التاريخ' : ''), rightValue = extra ? d.teacherName : d.date;
     const sh = Math.max(signatureH(rightLabel, rightValue), signatureH('مدير المدرسة', S.director, 1, sigImg));
     const bottom = box.y1, sigTop = bottom - sh;
-    const xr = box.x1 - 150, xl = box.x0 + 150, cx = W / 2;
+    const xr = box.x1 - (box.sigInset || 150), xl = box.x0 + 150, cx = W / 2;
     signature(ctx, skin, th, xr, sigTop, rightLabel, rightValue, {w:250});
     signature(ctx, skin, th, xl, sigTop, 'مدير المدرسة', S.director, {w:250, sigImage:true});
     stamp(ctx, xl + 128, bottom - 46, 42, th, d.seal);

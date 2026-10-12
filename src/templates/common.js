@@ -35,10 +35,10 @@ export function header(ctx, skin, th, box, sc, o){
     const last = i === ls.length - 1;
     line(ctx, l, box.x1, box.y0 + (i + 1) * lh, colW, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
   });
-  const cy = box.y0 + 36 * sc;
-  if(!image(ctx, 'side', box.x0 + 50 * sc, cy, 100 * sc, 74 * sc) && has(S.year)){
-    line(ctx, 'العام الدراسي', box.x0, box.y0 + lh, colW * 0.8, {size:13.5 * sc, min:10 * sc, fam:FONTS.sans, w:500, color:th.muted, align:'left', name:'header'});
-    line(ctx, S.year, box.x0, box.y0 + 2 * lh, colW * 0.8, {size:15.5 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
+  const cy = box.y0 + 36 * sc, hx0 = box.hx0 == null ? box.x0 : box.hx0;   // a skin may keep the left column clear of a corner ornament
+  if(!image(ctx, 'side', hx0 + 50 * sc, cy, 100 * sc, 74 * sc) && has(S.year)){
+    line(ctx, 'العام الدراسي', hx0, box.y0 + lh, colW * 0.8, {size:13.5 * sc, min:10 * sc, fam:FONTS.sans, w:500, color:th.muted, align:'left', name:'header'});
+    line(ctx, S.year, hx0, box.y0 + 2 * lh, colW * 0.8, {size:15.5 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
   }
   const cx = (box.x0 + box.x1) / 2;
   if(!image(ctx, 'center', cx, cy, W * 0.24, 80 * sc) && o.emblem){

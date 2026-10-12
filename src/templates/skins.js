@@ -12,6 +12,9 @@ import { frame, fineFrame, guillocheFrame, cornerFrame, girihBand } from '../orn
 import { rosette, medallion, starPoly } from '../ornaments/stars.js';
 import { crenellation, archFrame } from '../ornaments/oman.js';
 import { ornDivider, seal, awardBadge } from '../ornaments/awards.js';
+import { cornerSash, laurelBadge, archOrnament, fleuronRule, cornerRosette } from '../ornaments/royal.js';
+import { goldGradient } from '../ornaments/core.js';
+import { mark } from '../render/layout.js';
 
 /** Safe margin (10 mm from trim) in page units. */
 export const safe = (W, H) => W > H ? 34 : 48;
@@ -102,6 +105,40 @@ export const SKINS = {
     rule(ctx, x0, x1, y, th){ ornDivider(ctx, (x0 + x1) / 2, y + 2, (x1 - x0) / 2, O(th, {style:'diamonds', size:5, bg:env.ink ? '#FFFFFF' : this.bg})); },
     tone:{title:'primary', name:'primary'}
   },
+  royal:{
+    id:'royal', bg:'#FBF7EE',
+    fonts:fonts(F('ruqaa', 700), F('ruqaa', 700), F('naskh', 400), F('naskh', 700), F('sans', 600)),
+    /** Ivory paper, fine double gold frame, curved sashes in two opposite corners, rosette corners in the other two. */
+    page(ctx, W, H, th){
+      const land = W > H, bg = env.ink ? '#FFFFFF' : this.bg, k = land ? 1 : 1.22;
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      // faint star dishes in the side margins
+      for(const [x, y] of land ? [[60, H * 0.62], [W - 60, H * 0.38]] : [[50, H * 0.55], [W - 50, H * 0.3]]) rosette(ctx, x, y, 120 * k, 12, {layers:2, fillMode:'line', color:'#B08A3E', accent:'#B08A3E', alpha:0.12, ring:false, bg});
+      const m = land ? 26 : 32, G = env.ink ? th.primary : goldH2(ctx, W, H);
+      ctx.save(); ctx.strokeStyle = G;
+      ctx.lineWidth = 2.4; ctx.strokeRect(m, m, W - 2 * m, H - 2 * m);
+      ctx.lineWidth = 0.9; ctx.strokeRect(m + 8, m + 8, W - 2 * m - 16, H - 2 * m - 16);
+      ctx.restore();
+      cornerRosette(ctx, W - m - 4, m + 4, land ? 34 : 40, {color:th.primary, bg, ink:env.ink});
+      cornerRosette(ctx, m + 4, H - m - 4, land ? 34 : 40, {color:th.primary, bg, ink:env.ink});
+      const a = (land ? 250 : 300), b = (land ? 200 : 330);
+      cornerSash(ctx, a, b, {color:th.primary, ink:env.ink});
+      // the bottom-right sash stays smaller so the date / signer column beside it stays clear
+      ctx.save(); ctx.translate(W, H); ctx.rotate(Math.PI); cornerSash(ctx, a * 0.62, b * 0.62, {color:th.primary, ink:env.ink}); ctx.restore();
+      // '~' marks a keep-out zone: text must not enter it, but it may touch the page edge and other ornaments
+      mark('~sash', 0, 0, a * 0.42, b * 0.42); mark('~sash', W - a * 0.62 * 0.42, H - b * 0.62 * 0.42, a * 0.62 * 0.42, b * 0.62 * 0.42);
+      const p = land ? 60 : 78;
+      // the header's left column starts after the top-left sash and badge
+      return {x0:p, y0:land ? 56 : 74, x1:W - p, y1:H - (land ? 56 : 92), hx0:land ? 236 : 260, sigInset:land ? 200 : 190};
+    },
+    emblem(ctx, cx, cy, r, th){ archOrnament(ctx, cx, cy + r * 0.62, r * 3.4, {size:r * 1.15, color:th.primary, ink:env.ink, bg:env.ink ? '#FFFFFF' : this.bg}); },
+    divider(ctx, cx, y, half, th){ fleuronRule(ctx, cx, y, half * 1.25, {color:th.primary, ink:env.ink}); },
+    /** the award sits in the top-left corner, over the sash; the bottom centre carries an upside-down arch ornament */
+    cornerAward(ctx, W, H, th){ const land = W > H; laurelBadge(ctx, land ? 128 : 150, land ? 128 : 150, land ? 52 : 64, {color:th.primary, ink:env.ink}); },
+    award(ctx, cx, cy, r, th){ archOrnament(ctx, cx, cy + r * 0.9, r * 2.6, {size:r * 1.05, flip:true, color:th.primary, ink:env.ink, bg:env.ink ? '#FFFFFF' : this.bg}); },
+    rule(ctx, x0, x1, y, th){ fleuronRule(ctx, (x0 + x1) / 2, y + 2, (x1 - x0) / 2 - 10, {color:th.primary, ink:env.ink}); },
+    tone:{title:'primary', name:'primary'}
+  },
   joy:{
     id:'joy', bg:'#FFFFFF',
     fonts:fonts(F('lalezar', 400), F('lalezar', 400), F('sans', 500), F('sans', 700), F('sans', 700)),
@@ -157,6 +194,8 @@ function confetti(ctx, x, y, w, h, band, k){
   along(h - 2 * band, (t, r) => { piece(x + band * (0.3 + rnd() * 0.4), y + band + t, r); piece(x + w - band * (0.3 + rnd() * 0.4), y + band + t, rnd()); });
   ctx.restore();
 }
+/** Gold for the royal frame rules (one gradient across the page). */
+const goldH2 = (ctx, W, H) => goldGradient(ctx, 0, 0, W, H);
 function goldH(ctx, x0, x1){
   const g = ctx.createLinearGradient(x0, 0, x1, 0);
   [[0, 'rgba(176,138,62,0)'], [0.2, '#B08A3E'], [0.5, '#E3C67A'], [0.8, '#B08A3E'], [1, 'rgba(176,138,62,0)']].forEach(([t, c]) => g.addColorStop(t, c));

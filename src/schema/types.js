@@ -1,7 +1,7 @@
 /* Content types: the side panel is generated from this schema. */
 const guide = d => d.kind !== 'honor', honor = d => d.kind === 'honor';
 /** The four identities, then the v1 layouts kept for existing users (group 'v1'). */
-const NEW = [['luxe','فاخر'],['modern','عصري هادئ'],['heritage','عُماني تراثي'],['joy','مبهج']];
+const NEW = [['luxe','فاخر'],['royal','ملكي'],['modern','عصري هادئ'],['heritage','عُماني تراثي'],['joy','مبهج']];
 const v1 = (id, label) => [id, label, 'v1'];
 
 export const TYPES = {
