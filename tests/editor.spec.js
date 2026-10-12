@@ -41,3 +41,20 @@ test('gender switch rewrites the certificate wording and back', async ({page}) =
   await expect(reason).toHaveValue('لحصوله على {المركز} في مسابقة {المادة}، متمنّين له دوام التفوّق.');
   expect(errors).toEqual([]);
 });
+
+test('date helper writes Gregorian, Hijri (Umm al-Qura) or both', async ({page}) => {
+  const errors = await openV2(page);
+  const field = page.locator('#f-cert-date'), row = field.locator('xpath=following-sibling::div[contains(@class,"date-row")]');
+  await row.locator('input[type=date]').fill('2026-10-13');
+  await row.locator('select').selectOption('g'); await row.locator('button').click();
+  await expect(field).toHaveValue('13 أكتوبر 2026م');
+  await row.locator('select').selectOption('h'); await row.locator('button').click();
+  await expect(field).toHaveValue('2 جمادى الأولى 1448هـ');
+  await row.locator('select').selectOption('both'); await row.locator('button').click();
+  await expect(field).toHaveValue('13 أكتوبر 2026م الموافق 2 جمادى الأولى 1448هـ');
+  await page.locator('.tab[data-type="notice"]').click();
+  const nf = page.locator('#f-notice-date'), nrow = nf.locator('xpath=following-sibling::div[contains(@class,"date-row")]');
+  await nrow.locator('input[type=date]').fill('2026-10-13'); await nrow.locator('select').selectOption('both'); await nrow.locator('button').click();
+  await expect(nf).toHaveValue('الثلاثاء، 13 أكتوبر 2026م الموافق 2 جمادى الأولى 1448هـ');
+  expect(errors).toEqual([]);
+});

@@ -2,7 +2,7 @@
 import { state, curDoc } from '../state/store.js';
 import { TYPES } from '../schema/types.js';
 import { THEMES, FONTS, TFONTS } from '../schema/themes.js';
-import { defaults } from '../schema/defaults.js';
+import { defaults, fmtDateMode } from '../schema/defaults.js';
 import { lines, parseNames } from '../schema/parse.js';
 import { toGender } from '../schema/gender.js';
 import { OCCASIONS, presetFor } from '../schema/presets.js';
@@ -53,9 +53,27 @@ function fieldEl(f, d){
   box.append(lab, inp);
   let counter = null;
   if(f.t === 'list'){ counter = document.createElement('span'); counter.className = 'count'; counter.textContent = countText(f.k, inp.value); box.append(counter); }
+  if(f.date) box.append(datePicker(f, d, inp));
   if(f.hint){ const h = document.createElement('p'); h.className = 'hint'; h.textContent = arNum(f.hint); box.append(h); }
   inp.addEventListener('input', () => { d[f.k] = inp.value; if(counter) counter.textContent = countText(f.k, inp.value); changed(); });
   return box;
+}
+/** Date helper under a date field: pick a day and a calendar (ميلادي / هجري / كلاهما); the text stays editable. */
+function datePicker(f, d, inp){
+  const row = document.createElement('div'); row.className = 'date-row';
+  const day = document.createElement('input'); day.type = 'date'; day.setAttribute('aria-label', 'اختر اليوم');
+  const now = new Date(); day.value = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const mode = document.createElement('select'); mode.setAttribute('aria-label', 'التقويم');
+  [['g', 'ميلادي'], ['h', 'هجري'], ['both', 'ميلادي وهجري']].forEach(([v, l]) => { const o = document.createElement('option'); o.value = v; o.textContent = l; mode.append(o); });
+  const go = document.createElement('button'); go.type = 'button'; go.className = 'btn small'; go.textContent = 'أدخل التاريخ';
+  go.addEventListener('click', () => {
+    if(!day.value) return;
+    const [y, m, dd] = day.value.split('-').map(Number);
+    d[f.k] = inp.value = fmtDateMode(new Date(y, m - 1, dd, 12), mode.value, f.date === 'weekday');
+    changed();
+  });
+  row.append(day, mode, go);
+  return row;
 }
 /** «نصوص جاهزة»: replaces the document's texts with an occasion's wording (names, dates and places are kept). */
 function presetPicker(d){

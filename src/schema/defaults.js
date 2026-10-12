@@ -4,6 +4,21 @@ export function fmtDate(dt, wk){
   try{ const o = {day:'numeric', month:'long', year:'numeric', numberingSystem:'latn'}; if(wk) o.weekday = 'long';
     return new Intl.DateTimeFormat('ar', o).format(dt) + 'م'; }catch(e){ return ''; }
 }
+/** Hijri date (Umm al-Qura calendar, built into the browser): «2 جمادى الأولى 1448هـ». */
+export function fmtHijri(dt){
+  try{
+    const parts = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', {day:'numeric', month:'long', year:'numeric', numberingSystem:'latn'}).formatToParts(dt);
+    const get = t => (parts.find(p => p.type === t) || {}).value || '';
+    return `${get('day')} ${get('month')} ${get('year')}هـ`;
+  }catch(e){ return ''; }
+}
+/** Date text in the chosen calendar(s): mode 'g' (Gregorian) | 'h' (Hijri) | 'both'. */
+export function fmtDateMode(dt, mode, wk){
+  const wd = wk ? (() => { try{ return new Intl.DateTimeFormat('ar', {weekday:'long'}).format(dt) + ' '; }catch(e){ return ''; } })() : '';
+  if(mode === 'h') return wd + fmtHijri(dt);
+  if(mode === 'both') return fmtDate(dt, wk) + ' الموافق ' + fmtHijri(dt);
+  return fmtDate(dt, wk);
+}
 export const defaultSchool = () => ({l1:'سلطنة عمان', l2:'وزارة التعليم', l3:'مدرسة الخوير للبنين (5-9)', year:'2026 / 2027م', director:'أ. هلال الحسيني'});
 
 export function defaults(type){

@@ -101,3 +101,6 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15p
 .field select{font:inherit;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;box-sizing:border-box}
 .field select:focus{outline:2px solid var(--accent);outline-offset:1px}
 .preset{padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.date-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.date-row input[type=date],.date-row select{font:inherit;font-size:13px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:5px 8px;min-width:0}
+.date-row input[type=date]{direction:ltr}

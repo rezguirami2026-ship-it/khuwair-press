@@ -14,7 +14,7 @@ export const TYPES = {
     {k:'reason', l:'سبب التكريم', t:'area', rows:3, g:true, hint:'يمكنك كتابة {المادة} و{المركز} و{الصف} لتُملأ من قائمة الأسماء.'},
     {k:'teacherLabel', l:'صفة الموقّع الأول', t:'text', half:true},
     {k:'teacherName', l:'اسمه', t:'text', half:true},
-    {k:'date', l:'التاريخ', t:'text'},
+    {k:'date', l:'التاريخ', t:'text', date:'plain'},
     {k:'seal', l:'إظهار مكان الختم', t:'check'}
   ]},
   notice:{noun:'الإعلان', orient:'portrait', layouts:[...NEW, v1('formal','رسمي'), v1('card','بطاقة ملوّنة')], fields:[
@@ -22,7 +22,7 @@ export const TYPES = {
     {k:'title', l:'العنوان', t:'text'},
     {k:'greeting', l:'التحية', t:'text'},
     {k:'body', l:'نص الإعلان', t:'area', rows:5},
-    {k:'date', l:'اليوم والتاريخ', t:'text'},
+    {k:'date', l:'اليوم والتاريخ', t:'text', date:'weekday'},
     {k:'time', l:'الوقت', t:'text', half:true},
     {k:'place', l:'المكان', t:'text', half:true},
     {k:'note', l:'ملاحظة (اختياري)', t:'area', rows:2},
@@ -46,7 +46,7 @@ export const TYPES = {
     {k:'lead', l:'نص الدعوة', t:'area', rows:2},
     {k:'occasion', l:'المناسبة', t:'text'},
     {k:'desc', l:'تفاصيل المناسبة', t:'area', rows:2},
-    {k:'date', l:'اليوم والتاريخ', t:'text'},
+    {k:'date', l:'اليوم والتاريخ', t:'text', date:'weekday'},
     {k:'time', l:'الوقت', t:'text', half:true},
     {k:'place', l:'المكان', t:'text', half:true},
     {k:'closing', l:'عبارة الختام', t:'text'},
