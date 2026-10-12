@@ -15,6 +15,7 @@ import { exportSettings, importSettings, isFirstRun, showWelcome } from './ui/sc
 import { buildPanel, bindPanel, fillSchool, thumbs } from './ui/panel.js';
 import { onEdit } from './ui/preview.js';
 import { bindActions } from './ui/actions.js';
+import { bindPolish, registerSW } from './ui/polish.js';
 
 const firstRun = isFirstRun();
 load();
@@ -22,6 +23,8 @@ bindPanel();
 bindLogos(changed, schedule);
 bindPreview();
 bindActions();
+bindPolish({onPdf:() => $('#pdfBtn').click()});
+registerSW();
 for(const k of Object.keys(logoImg)) setLogoImg(k, state.logos[k]);
 fillSchool();
 refreshLogos();

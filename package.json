@@ -1,13 +1,13 @@
 {
   "name": "khuwair-press",
   "private": true,
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "npm run build:site && npm run build:single && npm run build:gallery",
     "build:site": "vite build --mode site",
-    "build:single": "vite build --mode single && node -e \"require('fs').renameSync('dist/single/index.html','dist/single/khuwair-press.html')\"",
+    "build:single": "vite build --mode single && node scripts/after-single.mjs",
     "preview": "vite preview --outDir dist/site",
     "test": "playwright test",
     "test:update": "playwright test --update-snapshots",

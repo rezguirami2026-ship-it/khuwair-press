@@ -147,3 +147,28 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15p
 .progress{display:flex;align-items:center;justify-content:center;gap:10px;font-variant-numeric:tabular-nums}
 .progress progress{width:min(260px,60vw);height:10px;accent-color:var(--accent)}
 .progress span{min-width:5.5em;text-align:center;font-weight:600;font-size:13.5px}
+/* ---- phase 6 polish ---- */
+.skip{position:absolute;inset-inline-start:12px;top:-60px;z-index:20;background:var(--accent);color:var(--accent-ink);padding:8px 14px;border-radius:8px;font-weight:700;text-decoration:none}
+.skip:focus{top:10px}
+.btn.icon{min-width:36px;padding-inline:8px;font-size:15px}
+.linkish{font:inherit;background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer}
+.linkish:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+.desk:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.about-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.about-head .brand-mark{width:44px;height:44px}
+.about-head h2{margin:0}
+.byline{margin:0;color:var(--gold);font-weight:700;font-family:var(--f-display);font-size:16px}
+.about h3{font-size:15px;margin:6px 0 0;font-family:var(--f-display)}
+.about p{margin:0;line-height:1.75}
+.keys{margin:0;padding-inline-start:20px;line-height:2}
+kbd{font:inherit;font-size:12px;font-weight:700;direction:ltr;display:inline-block;padding:0 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--surface-2)}
+.standalone a{color:var(--accent);font-weight:700}
+.tpl canvas,.thumb{color-scheme:light}
+/* phones: the download buttons stay within reach at the bottom of the screen */
+@media (max-width:860px){
+  .actions{position:fixed;inset-inline:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 18px -10px var(--shadow)}
+  .actions .btn{flex:1 1 0;padding-inline:8px}
+  .app{padding-bottom:96px}
+  .progress{position:fixed;inset-inline:0;bottom:64px;z-index:10;background:var(--surface);padding:8px 12px}
+}
+@media (max-width:520px){ .top{gap:10px} .brand h1{font-size:22px} .history .btn{padding-inline:8px} }

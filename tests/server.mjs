@@ -10,7 +10,8 @@ createServer(async (req, res) => {
   const path = normalize(decodeURIComponent(new URL(req.url, 'http://x').pathname)).replace(/^([/\\])+/, '');
   if(path.startsWith('..')){ res.writeHead(403).end(); return; }
   try{
-    const body = await readFile(join(ROOT, path.endsWith('/') || !path ? path + 'index.html' : path));
-    res.writeHead(200, {'content-type':TYPES[extname(path)] || 'application/octet-stream', 'cache-control':'no-store'}).end(body);
+    const file = /[\\/]$/.test(path) || !path ? path + 'index.html' : path;   // a folder serves its index.html
+    const body = await readFile(join(ROOT, file));
+    res.writeHead(200, {'content-type':TYPES[extname(file)] || 'application/octet-stream', 'cache-control':'no-store'}).end(body);
   }catch(e){ res.writeHead(404).end('not found'); }
 }).listen(PORT, () => console.log('test server on', PORT));

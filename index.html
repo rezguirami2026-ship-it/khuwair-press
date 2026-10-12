@@ -5,8 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>مطبعة الخوير</title>
 <meta name="description" content="صمّم مطبوعات المدرسة ونزّلها جاهزة للطباعة: شهادات، إعلانات، ملصقات، دعوات.">
+<meta name="theme-color" content="#1E5B47" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1412" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%231E5B47'/%3E%3Cg fill='none' stroke='%23E9CF92' stroke-width='2.6'%3E%3Crect x='11' y='11' width='18' height='18'/%3E%3Crect x='11' y='11' width='18' height='18' transform='rotate(45 20 20)'/%3E%3C/g%3E%3Ccircle cx='20' cy='20' r='3' fill='%23E9CF92'/%3E%3C/svg%3E">
+<!--pwa-->
+<script>try{var t=localStorage.getItem('khuwair-press-ui-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
 <body>
+<a class="skip" href="#fields">تخطَّ إلى المحتوى</a>
 <div class="app" dir="rtl" lang="ar">
   <header class="top">
     <div class="brand">
@@ -20,9 +26,11 @@
         <p>صمّم مطبوعات المدرسة ونزّلها جاهزة للطباعة</p>
       </div>
     </div>
-    <div class="history" role="group" aria-label="التراجع والإعادة">
+    <div class="history" role="toolbar" aria-label="أدوات">
       <button class="btn small ghost" type="button" id="undoBtn" title="تراجع (Ctrl+Z)" aria-keyshortcuts="Control+Z">↶ تراجع</button>
       <button class="btn small ghost" type="button" id="redoBtn" title="إعادة (Ctrl+Y)" aria-keyshortcuts="Control+Y">↷ إعادة</button>
+      <button class="btn small ghost icon" type="button" id="themeBtn" title="المظهر" aria-label="المظهر: تلقائي"></button>
+      <button class="btn small ghost icon" type="button" id="aboutBtn" title="عن الأداة" aria-label="عن الأداة">؟</button>
     </div>
     <nav class="tabs" role="tablist" aria-label="نوع التصميم">
       <button class="tab" role="tab" type="button" data-type="cert">شهادات</button>
@@ -150,10 +158,40 @@
       </details>
 
       <div class="reset-row"><button class="btn small ghost" type="button" id="resetBtn">استعادة النص الافتراضي لهذا القسم</button></div>
-      <p class="foot">يُحفظ عملك تلقائياً في هذا المتصفح.</p>
+      <p class="foot">يُحفظ عملك تلقائياً في هذا المتصفح. · <button class="linkish" type="button" data-about>عن الأداة</button></p>
     </aside>
   </main>
 </div>
+<dialog id="aboutDlg" class="dlg about" aria-labelledby="aboutTitle" dir="rtl">
+  <div class="about-head">
+    <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <rect x="9" y="9" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6"/>
+      <rect x="9" y="9" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" transform="rotate(45 20 20)"/>
+      <circle cx="20" cy="20" r="3.4" fill="currentColor"/>
+    </svg>
+    <div>
+      <h2 id="aboutTitle">مطبعة الخوير</h2>
+      <p class="byline">إعداد أ. رامي الرزقي</p>
+    </div>
+  </div>
+  <div class="dlg-body">
+    <p>أداة عربية لتصميم مطبوعات المدرسة — الشهادات والإعلانات والملصقات والدعوات — وتنزيلها جاهزة للطباعة بدقة ٣٠٠ نقطة في البوصة. صُمّمت أولاً لمدرسة الخوير للبنين (٥-٩) بمسقط، وتصلح لأي مدرسة.</p>
+    <h3>خصوصيتك</h3>
+    <p>كل ما تكتبه وترفعه يبقى في متصفحك على هذا الجهاز. لا تُرسَل الأسماء ولا الشعارات إلى أي خادم، والأداة تعمل دون إنترنت.</p>
+    <h3>اختصارات لوحة المفاتيح</h3>
+    <ul class="keys">
+      <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> تراجع، و<kbd>Ctrl</kbd> + <kbd>Y</kbd> إعادة</li>
+      <li><kbd>Ctrl</kbd> + <kbd>S</kbd> تنزيل PDF</li>
+      <li><kbd>←</kbd> <kbd>→</kbd> التنقل بين أنواع التصميم، وبين القوالب، وبين الشهادات في المعاينة</li>
+      <li><kbd>Esc</kbd> إغلاق النوافذ</li>
+    </ul>
+    <p class="standalone" hidden><a href="khuwair-press.html" download>تنزيل النسخة المستقلة (ملف واحد يعمل دون إنترنت)</a></p>
+    <h3>التراخيص</h3>
+    <p class="hint">الخطوط: أميري، عارف رقعة، ريم كوفي، تجوال، IBM Plex Sans Arabic، المسيري، نوتو كوفي، شهرزاد الجديد، ركّاس، لاله‌زار — جميعها برخصة SIL Open Font License 1.1. المكتبات: jsPDF وfflate (MIT)، وSheetJS (Apache 2.0). الزخارف كلها مرسومة بالكود. لا تتضمّن الأداة أي شعار رسمي؛ الشعارات من رفع المستخدم فقط.</p>
+    <p class="hint">الإصدار <span id="ver"></span></p>
+  </div>
+  <div class="dlg-actions"><button class="btn primary" type="button" data-close>إغلاق</button></div>
+</dialog>
 <dialog id="importDlg" class="dlg" aria-labelledby="importTitle" dir="rtl">
   <h2 id="importTitle">استيراد الأسماء</h2>
   <div class="dlg-body"></div>
