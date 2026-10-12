@@ -54,13 +54,23 @@ function buildFields(){
 export function buildPanel(){
   const t = TYPES[state.type], d = curDoc();
   $$('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.type === state.type)));
-  const lay = $('#layouts'); lay.textContent = '';
-  t.layouts.forEach(([id, label]) => {
+  const lay = $('#layouts'), old = $('#layoutsV1'); lay.textContent = ''; old.textContent = '';
+  t.layouts.forEach(([id, label, group]) => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label;
     b.setAttribute('aria-pressed', String(d.layout === id));
     b.addEventListener('click', () => { d.layout = id; buildPanel(); changed(); });
-    lay.append(b);
+    (group === 'v1' ? old : lay).append(b);
   });
+  if(t.layouts.some(l => l[2] === 'v1' && l[0] === d.layout)) old.parentElement.open = true;
+  const kinds = $('#kinds'); kinds.textContent = '';
+  $('#kindGroup').hidden = !t.kinds;
+  (t.kinds || []).forEach(([id, label]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label;
+    b.setAttribute('aria-pressed', String((d.kind || t.kinds[0][0]) === id));
+    b.addEventListener('click', () => { d.kind = id; buildPanel(); changed(); });
+    kinds.append(b);
+  });
+  $('#gold').checked = state.gold !== false; $('#ink').checked = !!state.ink;
   $$('.sw').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === state.theme)));
   $$('.chip.font').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.font === state.tfont)));
   $('#digits').checked = state.digits;
@@ -98,6 +108,8 @@ export function bindPanel(){
     fontsBox.append(b);
   });
   $('#digits').addEventListener('change', e => { state.digits = e.target.checked; changed(); });
+  $('#gold').addEventListener('change', e => { state.gold = e.target.checked; changed(); });
+  $('#ink').addEventListener('change', e => { state.ink = e.target.checked; changed(); });
   $$('.tab').forEach(b => b.addEventListener('click', () => {
     if(state.type === b.dataset.type) return;
     state.type = b.dataset.type; state.idx = 0; say(''); buildPanel(); changed();

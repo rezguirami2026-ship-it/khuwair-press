@@ -34,7 +34,7 @@ export async function offerFile(blob, filename){
 /** File name from the document's main title, safe on every OS. */
 export function baseName(st){
   const d = st.docs[st.type];
-  let n = st.type === 'cert' ? d.title : st.type === 'notice' ? d.title : st.type === 'poster' ? (d.layout === 'honor' ? d.hTitle : d.gTitle) : (d.occasion || d.heading);
+  let n = st.type === 'cert' ? d.title : st.type === 'notice' ? d.title : st.type === 'poster' ? (d.kind === 'honor' ? d.hTitle : d.gTitle) : (d.occasion || d.heading);
   n = String(n || 'تصميم').replace(/[\\/:*?"<>|\n\r\t]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
   return n || 'تصميم';
 }

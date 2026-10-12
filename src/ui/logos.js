@@ -3,7 +3,7 @@ import { state } from '../state/store.js';
 import { $$, say } from './dom.js';
 
 /** Decoded images used by the renderer. */
-export const logoImg = {center:null, side:null};
+export const logoImg = {center:null, side:null, signature:null, stamp:null};
 let onLogo = () => {};
 
 /** Decodes a stored logo and redraws once it can be drawn. */

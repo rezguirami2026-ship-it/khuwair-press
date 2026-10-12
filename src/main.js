@@ -4,6 +4,7 @@ import { state, load } from './state/store.js';
 import { migrate } from './state/migrate.js';
 import { records } from './schema/parse.js';
 import { draw, renderTo, pageSize } from './render/draw.js';
+import { env } from './render/env.js';
 import { buildPdf } from './export/pdf.js';
 import { logoImg, setLogoImg, refreshLogos, bindLogos } from './ui/logos.js';
 import { schedule, changed, renderPreview, bindPreview } from './ui/preview.js';
@@ -15,7 +16,7 @@ bindPanel();
 bindLogos(changed, schedule);
 bindPreview();
 bindActions();
-setLogoImg('center', state.logos.center); setLogoImg('side', state.logos.side);
+for(const k of Object.keys(logoImg)) setLogoImg(k, state.logos[k]);
 fillSchool();
 refreshLogos();
 buildPanel();
@@ -26,12 +27,14 @@ fontsReady().then(schedule);
 
 /* Test hook (Playwright): only with ?test in the URL. */
 if(/[?&]test\b/.test(location.search)){
-  window.__kp = {state, logoImg, setLogoImg, migrate, records, renderTo, buildPdf, fontsReady,
-    render(px, i){
+  window.__kp = {isV2:true, state, logoImg, setLogoImg, migrate, records, renderTo, buildPdf, fontsReady,
+    render(px, i, withBoxes){
       const [W, H] = pageSize(state), c = document.createElement('canvas');
       c.width = px; c.height = Math.round(px * H / W);
+      env.boxes = withBoxes ? [] : null;
       const {over} = draw(c.getContext('2d'), state, logoImg, px, i);
-      return {url:c.toDataURL('image/png'), over};
+      const boxes = env.boxes; env.boxes = null;
+      return {url:c.toDataURL('image/png'), over, boxes};
     },
     refresh(){ fillSchool(); refreshLogos(); buildPanel(); renderPreview(); }};
 }

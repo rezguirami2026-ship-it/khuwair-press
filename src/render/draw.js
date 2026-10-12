@@ -13,6 +13,7 @@ export function draw(ctx, st, logos, px, recIdx){
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.setTransform(px / W, 0, 0, px / W, 0, 0);
   env.state = st; env.logos = logos; env.DIG = st.digits; env.OVER = false;
+  env.gold = st.gold !== false; env.ink = !!st.ink;
   const d = st.docs[st.type], th = THEMES[st.theme] || THEMES.maroon;
   const fn = DRAW[st.type][d.layout] || Object.values(DRAW[st.type])[0];
   const recs = records(st);

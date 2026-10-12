@@ -49,10 +49,16 @@
       <details class="sec" open>
         <summary>الشكل</summary>
         <div class="sec-body">
-          <div class="group"><span class="lbl">القالب</span><div class="chips" id="layouts"></div></div>
+          <div class="group" id="kindGroup" hidden><span class="lbl">نوع الملصق</span><div class="chips" id="kinds"></div></div>
+          <div class="group"><span class="lbl">القالب</span><div class="chips" id="layouts"></div>
+            <details class="older"><summary>قوالب الإصدار الأول</summary><div class="chips" id="layoutsV1"></div></details></div>
           <div class="group"><span class="lbl">الألوان</span><div class="swatches" id="swatches"></div></div>
           <div class="group"><span class="lbl">خط العناوين</span><div class="chips" id="fonts"></div></div>
-          <label class="switch"><input type="checkbox" id="digits"><span></span>أرقام عربية (١٢٣)</label>
+          <div class="switches">
+            <label class="switch"><input type="checkbox" id="digits"><span></span>أرقام عربية (١٢٣)</label>
+            <label class="switch"><input type="checkbox" id="gold"><span></span>تأثير ذهبي</label>
+            <label class="switch"><input type="checkbox" id="ink"><span></span>توفير الحبر</label>
+          </div>
         </div>
       </details>
 
@@ -90,6 +96,28 @@
               <span class="hint">أعلى يسار الصفحة، مثل شعار المدرسة (يحلّ محل العام الدراسي)</span>
               <div class="logo-btns">
                 <label class="btn small">رفع صورة<input class="vh" type="file" accept="image/*" id="logo-side"></label>
+                <button class="btn small ghost rm" type="button">إزالة</button>
+              </div>
+            </div>
+          </div>
+          <div class="logo-slot" data-key="signature">
+            <div class="thumb"></div>
+            <div>
+              <b>توقيع المدير</b>
+              <span class="hint">صورة PNG بخلفية شفافة، تظهر فوق اسم المدير</span>
+              <div class="logo-btns">
+                <label class="btn small">رفع صورة<input class="vh" type="file" accept="image/*" id="logo-signature"></label>
+                <button class="btn small ghost rm" type="button">إزالة</button>
+              </div>
+            </div>
+          </div>
+          <div class="logo-slot" data-key="stamp">
+            <div class="thumb"></div>
+            <div>
+              <b>ختم المدرسة</b>
+              <span class="hint">صورة PNG بخلفية شفافة، تظهر بجانب توقيع المدير</span>
+              <div class="logo-btns">
+                <label class="btn small">رفع صورة<input class="vh" type="file" accept="image/*" id="logo-stamp"></label>
                 <button class="btn small ghost rm" type="button">إزالة</button>
               </div>
             </div>

@@ -7,7 +7,12 @@ const FAMILIES = {
   'aref-ruqaa': [400, 700],
   'reem-kufi': [400, 500, 600, 700],
   'tajawal': [400, 500, 700, 800],
-  'ibm-plex-sans-arabic': [400, 500, 600, 700]
+  'ibm-plex-sans-arabic': [400, 500, 600, 700],
+  'el-messiri': [400, 600, 700],
+  'noto-kufi-arabic': [500, 700],
+  'scheherazade-new': [400, 700],
+  'lalezar': [400],
+  'rakkas': [400]
 };
 const SUBSETS = ['arabic', 'latin'];
 

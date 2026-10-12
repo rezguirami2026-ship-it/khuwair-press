@@ -18,7 +18,7 @@ const EMPTY = {
 
 /** Each case: {name, type, layout, theme?, tfont?, digits?, doc?, school?, logos?, rec?, over?}
  *  `over` is the expected overflow flag where the content is (or is not) impossible to fit. */
-export const CASES = [
+export const LEGACY_CASES = [
   ...ALL.flatMap(({type, layout}) => THEMES.map(theme => ({name:`${type}-${layout}-${theme}`, type, layout, theme, over:false}))),
   ...ALL.flatMap(({type, layout}) => ['kufi', 'naskh'].map(tfont => ({name:`${type}-${layout}-font-${tfont}`, type, layout, tfont}))),
   ...ALL.map(({type, layout}) => ({name:`${type}-${layout}-latin-digits`, type, layout, digits:false})),
@@ -33,3 +33,30 @@ export const CASES = [
   ...LAYOUTS.invite.map(layout => ({name:`stress-invite-${layout}-long`, type:'invite', layout, doc:{lead:LONG_BODY.slice(0, 200), occasion:'حفل تكريم الطلبة المتفوّقين والمجيدين في المسابقات العلمية والثقافية والرياضية', desc:LONG_BODY.slice(0, 160)}}))
 ];
 export const STRESS_NAMES_60 = NAMES_60;
+
+/* ---- the four new identities (phase 3) ---- */
+export const NEW_LAYOUTS = ['luxe', 'modern', 'heritage', 'joy'];
+const TYPES4 = ['cert', 'notice', 'poster', 'invite'];
+const each = fn => TYPES4.flatMap(type => (type === 'poster' ? ['guide', 'honor'] : [null]).flatMap(kind => NEW_LAYOUTS.map(layout => fn(type, kind, layout))));
+const nm = (type, kind, layout, tail) => ['new', type, kind, layout, tail].filter(Boolean).join('-');
+const HUGE_BODY = Array(5).fill(LONG_BODY).join(' ');
+const HONOR_24_LONG = HONOR_24.split('\n').map(l => LONG_NAME + ' - ' + l.split(' - ')[1]).join('\n');
+
+/** `over` is the expected warning: false whenever the content can fit; true only for impossible content. */
+export const NEW_CASES = [
+  ...each((type, kind, layout) => THEMES.map(theme => ({name:nm(type, kind, layout, theme), type, kind, layout, theme, over:false}))).flat(),
+  ...each((type, kind, layout) => ({name:nm(type, kind, layout, 'empty'), type, kind, layout, doc:EMPTY[type], school:{l1:'', l2:'', l3:'', year:'', director:''}, over:false})),
+  ...each((type, kind, layout) => ({name:nm(type, kind, layout, 'images'), type, kind, layout, theme:'navy', logos:true, images:true, over:false})),
+  ...each((type, kind, layout) => ({name:nm(type, kind, layout, 'ink'), type, kind, layout, theme:'green', ink:true, gold:false, over:false})),
+  ...NEW_LAYOUTS.flatMap(layout => [
+    {name:nm('cert', null, layout, 'long-name'), type:'cert', layout, doc:{names:LONG_NAME + ' - 9/12', reason:LONG_BODY.slice(0, 260)}, over:false},
+    {name:nm('cert', null, layout, '60-last'), type:'cert', layout, doc:{names:NAMES_60}, rec:59, over:false},
+    {name:nm('cert', null, layout, 'font-kufi'), type:'cert', layout, tfont:'notokufi', over:false},
+    {name:nm('notice', null, layout, 'long-body'), type:'notice', layout, doc:{body:LONG_BODY}, over:false},
+    {name:nm('notice', null, layout, 'impossible'), type:'notice', layout, doc:{body:HUGE_BODY}, over:true},
+    {name:nm('poster', 'honor', layout, '24-long'), type:'poster', kind:'honor', layout, doc:{hNames:HONOR_24_LONG}, over:false},
+    {name:nm('poster', 'honor', layout, '24'), type:'poster', kind:'honor', layout, doc:{hNames:HONOR_24}, over:false},
+    {name:nm('poster', 'guide', layout, '10'), type:'poster', kind:'guide', layout, doc:{gPoints:POINTS_10}, over:false},
+    {name:nm('invite', null, layout, 'long'), type:'invite', layout, doc:{lead:LONG_BODY.slice(0, 200), occasion:'حفل تكريم الطلبة المتفوّقين والمجيدين في المسابقات العلمية والثقافية والرياضية', desc:LONG_BODY.slice(0, 160)}, over:false}
+  ])
+];

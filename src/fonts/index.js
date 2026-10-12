@@ -4,7 +4,10 @@ import './fonts.css';
 const SAMPLE = 'شهادة تقدير ١٢٣ 123';
 export const FONT_SPECS = ['400 30px "Amiri"', '700 30px "Amiri"', '400 30px "Aref Ruqaa"', '700 30px "Aref Ruqaa"',
   '500 30px "Reem Kufi"', '600 30px "Reem Kufi"', '700 30px "Reem Kufi"',
-  '400 30px "Tajawal"', '500 30px "Tajawal"', '700 30px "Tajawal"', '800 30px "Tajawal"'];
+  '400 30px "Tajawal"', '500 30px "Tajawal"', '700 30px "Tajawal"', '800 30px "Tajawal"',
+  '400 30px "IBM Plex Sans Arabic"', '500 30px "IBM Plex Sans Arabic"', '600 30px "IBM Plex Sans Arabic"', '700 30px "IBM Plex Sans Arabic"',
+  '400 30px "El Messiri"', '600 30px "El Messiri"', '700 30px "El Messiri"', '500 30px "Noto Kufi Arabic"', '700 30px "Noto Kufi Arabic"',
+  '400 30px "Scheherazade New"', '700 30px "Scheherazade New"', '400 30px "Lalezar"', '400 30px "Rakkas"'];
 
 let ready = null;
 /** Resolves once every face in FONT_SPECS is loaded (Arabic and Latin subsets). */

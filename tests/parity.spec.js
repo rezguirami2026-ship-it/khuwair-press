@@ -3,13 +3,13 @@ import { test, expect } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
-import { CASES } from './cases.js';
+import { LEGACY_CASES } from './cases.js';
 import { openV1, openV2, renderCase, pngBuffer } from './helpers.js';
 
 const OUT = 'tests/__output__/parity';
 mkdirSync(OUT, {recursive:true});
 
-for(const c of CASES){
+for(const c of LEGACY_CASES){
   test(`parity ${c.name}`, async ({browser}) => {
     const p1 = await (await browser.newContext()).newPage();
     const p2 = await (await browser.newContext()).newPage();
