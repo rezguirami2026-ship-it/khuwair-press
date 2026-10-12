@@ -91,3 +91,20 @@ for(const [label, viewport, dpr] of [['desktop', {width:1366, height:900}, 1], [
     }
   });
 }
+
+test('saved data from the earlier site: the old sample teacher is removed, the date takes its place', async ({page}) => {
+  const saved = {v:2, type:'cert', theme:'maroon', tfont:'auto', digits:true, gold:true, ink:false, idx:0,
+    school:{l1:'سلطنة عمان', l2:'وزارة التعليم', l3:'مدرسة السلام', year:'2026 / 2027م', director:'أ. سعيد'},
+    logos:{center:null, side:null, signature:null, stamp:null},
+    docs:{cert:{layout:'luxe', teacherLabel:'معلم الرياضيات', teacherName:'أ. اسم المعلم', date:'13 أكتوبر 2026م'}}};
+  await page.addInitScript(s => { if(!localStorage.getItem('khuwair-press-v2')) localStorage.setItem('khuwair-press-v2', s); }, JSON.stringify(saved));
+  const errors = await openV2(page);
+  await expect(page.locator('#f-cert-teacherLabel')).toHaveValue('');
+  await expect(page.locator('#f-cert-teacherName')).toHaveValue('');
+  const r = await page.evaluate(() => window.__kp.render(1000, 0, true));
+  expect(r.boxes.some(b => b.name === 'sign' && b.x > 600)).toBe(true);   // right column now shows the date
+  // a signer the user typed in is kept
+  const kept = await page.evaluate(() => window.__kp.migrate({v:2, docs:{cert:{teacherLabel:'رائد النشاط', teacherName:'أ. خالد'}}}).docs.cert.teacherName);
+  expect(kept).toBe('أ. خالد');
+  expect(errors).toEqual([]);
+});

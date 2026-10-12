@@ -33,6 +33,11 @@ export function migrate(saved){
     const doc = Object.assign(defaults(t), (saved.docs || {})[t] || {});
     if(t === 'poster' && (doc.layout === 'guide' || doc.layout === 'honor')){ doc.kind = doc.layout; doc.layout = 'v1'; }
     if(!TYPES[t].layouts.some(l => l[0] === doc.layout)) doc.layout = TYPES[t].layouts[0][0];
+    // Certificates no longer carry a teacher signer by default: drop the old sample signer if it is still untouched
+    // (the date then takes its place). A signer the user typed in is kept.
+    if(t === 'cert' && doc.teacherLabel === 'معلم الرياضيات' && ['أ. اسم المعلم', 'أ. رامي الرزقي'].includes(doc.teacherName)){
+      doc.teacherLabel = ''; doc.teacherName = '';
+    }
     st.docs[t] = doc;
   }
   st.v = VERSION;

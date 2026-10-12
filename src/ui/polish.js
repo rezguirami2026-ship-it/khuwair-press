@@ -64,5 +64,11 @@ export function bindPolish({onPdf}){
 /** Offline app: the site build registers a service worker (the single-file build is already self-contained). */
 export function registerSW(){
   if(import.meta.env.MODE !== 'site' || !('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
-  window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+  // when a new version takes over (after an update was published), reload once so the user sees it at once
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if(hadController && !reloaded){ reloaded = true; location.reload(); } });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(r => r.update()).catch(() => {});
+  });
 }
