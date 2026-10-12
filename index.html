@@ -126,6 +126,11 @@
               </div>
             </div>
           </div>
+          <div class="settings-row">
+            <button class="btn small" type="button" id="exportSchool">حفظ إعدادات المدرسة في ملف</button>
+            <button class="btn small" type="button" id="importSchool">تحميل إعدادات من ملف</button>
+          </div>
+          <p class="hint">ملف الإعدادات ينقل بيانات المدرسة والشعارات والتوقيع والختم والألوان إلى جهاز آخر.</p>
         </div>
       </details>
 
@@ -141,6 +146,22 @@
     <button class="btn primary" type="button" data-mode="replace">استبدال القائمة</button>
     <button class="btn" type="button" data-mode="append">إضافة إلى القائمة</button>
     <button class="btn ghost" type="button" data-close>إلغاء</button>
+  </div>
+</dialog>
+<dialog id="welcomeDlg" class="dlg" aria-labelledby="welcomeTitle" dir="rtl">
+  <h2 id="welcomeTitle">مرحباً بك في مطبعة الخوير</h2>
+  <p class="hint">أدخل بيانات مدرستك مرة واحدة، وستظهر في كل التصاميم. يمكنك تعديلها لاحقاً من «بيانات المدرسة».</p>
+  <div class="dlg-body welcome-grid">
+    <label class="imp-field"><span>السطر الأول</span><input type="text" data-w="l1"></label>
+    <label class="imp-field"><span>السطر الثاني</span><input type="text" data-w="l2"></label>
+    <label class="imp-field wide"><span>اسم المدرسة</span><input type="text" data-w="l3" placeholder="مثال: مدرسة الخوير للبنين (5-9)"></label>
+    <label class="imp-field"><span>العام الدراسي</span><input type="text" data-w="year"></label>
+    <label class="imp-field"><span>مدير المدرسة</span><input type="text" data-w="director" placeholder="مثال: أ. هلال الحسيني"></label>
+  </div>
+  <div class="dlg-actions">
+    <button class="btn primary" type="button" id="wStart">ابدأ</button>
+    <button class="btn" type="button" id="wImport">لديّ ملف إعدادات</button>
+    <button class="btn ghost" type="button" id="wSkip">تخطٍّ وجرّب بالأمثلة</button>
   </div>
 </dialog>
 <script type="module" src="/src/main.js"></script>

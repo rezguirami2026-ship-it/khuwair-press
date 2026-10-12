@@ -1,6 +1,8 @@
 // Editor features (phase 4), driven through the real UI.
 import { test, expect } from '@playwright/test';
 import { openV2, overlaps } from './helpers.js';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
 
 const render = page => page.evaluate(() => window.__kp.render(1000, 0, true));
 
@@ -136,5 +138,44 @@ test('import names from Excel (with headers) and from an Arabic Windows-1256 CSV
   await dlg.locator('[data-mode="append"]').click();
   await expect(page.locator('#f-cert-names')).toHaveValue(/\nأحمد بن علي العامري - 5\/3\nعمر بن ناصر الشكيلي - 5\/4$/);
   await expect(page.locator('#pdfBtn')).toContainText('٥ شهادات');
+  expect(errors).toEqual([]);
+});
+
+test('first run asks for the school, and the settings file moves it to another device', async ({browser}) => {
+  const page = await (await browser.newContext({acceptDownloads:true})).newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(String(e)));
+  await page.goto('/dist/single/khuwair-press.html?test&firstrun');
+  const dlg = page.locator('#welcomeDlg');
+  await expect(dlg).toBeVisible();
+  await expect(dlg.locator('[data-w="l2"]')).toHaveValue('وزارة التعليم');
+  await dlg.locator('[data-w="l3"]').fill('مدرسة السلام للتعليم الأساسي (1-4)');
+  await dlg.locator('[data-w="director"]').fill('أ. سعاد البلوشية');
+  await dlg.locator('#wStart').click();
+  await expect(dlg).toBeHidden();
+  await page.locator('#schoolSec summary').click();
+  await expect(page.locator('#s-l3')).toHaveValue('مدرسة السلام للتعليم الأساسي (1-4)');
+  // reload: no welcome screen any more
+  await page.reload(); await page.waitForFunction(() => window.__kp);
+  await expect(page.locator('#welcomeDlg')).toBeHidden();
+  // export the settings file …
+  await page.locator('#schoolSec summary').click();
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.locator('#exportSchool').click()]);
+  expect(dl.suggestedFilename()).toBe('إعدادات مدرسة السلام للتعليم الأساسي (1-4).khuwair.json');
+  const json = JSON.parse(require('node:fs').readFileSync(await dl.path(), 'utf8'));
+  expect(json.format).toBe('khuwair-press/school');
+  expect(json.school.director).toBe('أ. سعاد البلوشية');
+  // … and import it on a fresh device through the welcome screen
+  const p2 = await (await browser.newContext()).newPage();
+  await p2.goto('/dist/single/khuwair-press.html?test&firstrun');
+  const [chooser] = await Promise.all([p2.waitForEvent('filechooser'), p2.locator('#wImport').click()]);
+  await chooser.setFiles({name:'s.json', mimeType:'application/json', buffer:Buffer.from(JSON.stringify(json))});
+  await expect(p2.locator('#welcomeDlg')).toBeHidden();
+  expect(await p2.evaluate(() => window.__kp.state.school.director)).toBe('أ. سعاد البلوشية');
+  // a wrong file is refused politely
+  await p2.locator('#schoolSec summary').click();
+  const [c2] = await Promise.all([p2.waitForEvent('filechooser'), p2.locator('#importSchool').click()]);
+  await c2.setFiles({name:'x.json', mimeType:'application/json', buffer:Buffer.from('{"hello":1}')});
+  await expect(p2.locator('#status')).toHaveText('هذا ليس ملف إعدادات مدرسة صالحاً.');
   expect(errors).toEqual([]);
 });

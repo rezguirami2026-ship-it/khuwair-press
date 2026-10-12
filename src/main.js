@@ -10,9 +10,11 @@ import { logoImg, setLogoImg, refreshLogos, bindLogos } from './ui/logos.js';
 import { schedule, changed, restored, renderPreview, bindPreview } from './ui/preview.js';
 import { initHistory, undo, redo, canUndo, canRedo } from './ui/history.js';
 import { $ } from './ui/dom.js';
+import { exportSettings, importSettings, isFirstRun, showWelcome } from './ui/school.js';
 import { buildPanel, bindPanel, fillSchool } from './ui/panel.js';
 import { bindActions } from './ui/actions.js';
 
+const firstRun = isFirstRun();
 load();
 bindPanel();
 bindLogos(changed, schedule);
@@ -38,6 +40,12 @@ document.addEventListener('keydown', e => {
   else if(k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); redo(); histButtons(); }
 });
 document.addEventListener('input', () => setTimeout(histButtons, 700));
+
+/* school settings file, and the welcome screen on first run (tests opt in with ?firstrun) */
+const refreshAll = () => { for(const k of Object.keys(logoImg)) setLogoImg(k, state.logos[k]); fillSchool(); refreshLogos(); buildPanel(); changed(); };
+$('#exportSchool').addEventListener('click', exportSettings);
+$('#importSchool').addEventListener('click', () => importSettings(refreshAll));
+if(firstRun && (!/[?&]test\b/.test(location.search) || /[?&]firstrun\b/.test(location.search))) showWelcome(refreshAll);
 document.addEventListener('click', () => setTimeout(histButtons, 700));
 
 if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', schedule);
