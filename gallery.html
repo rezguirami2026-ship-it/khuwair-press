@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معرض الزخارف</title>
+<style>
+:root{--bg:#F1F2EE;--surface:#FFFFFF;--ink:#1B211E;--muted:#5D6862;--line:#D7DCD6;--accent:#1E5B47}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111614;--surface:#1A201D;--ink:#E4EBE7;--muted:#9AA8A1;--line:#2B3631;--accent:#72BE9F;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111614;--surface:#1A201D;--ink:#E4EBE7;--muted:#9AA8A1;--line:#2B3631;--accent:#72BE9F;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic","Tajawal",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:2;background:var(--surface);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+h1{font-size:20px;margin:0 0 0 12px}
+label{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+input[type=range]{width:120px;accent-color:var(--accent)}
+select{font:inherit;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+main{padding:16px;max-width:1500px;margin:0 auto}
+h2{font-size:17px;margin:26px 0 12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px}
+figure.wide{grid-column:span 2}
+@media (max-width:600px){figure.wide{grid-column:auto}}
+canvas{display:block;width:100%;height:auto;background:#FFFFFF;border-radius:4px}
+figcaption{font-size:13px;margin-top:6px;display:flex;justify-content:space-between;color:var(--muted)}
+code{font-size:11px;direction:ltr}
+</style>
+</head>
+<body>
+<header>
+  <h1>معرض الزخارف</h1>
+  <label>الألوان <select id="theme"></select></label>
+  <label><input type="checkbox" id="gold"> تأثير ذهبي</label>
+  <label><input type="checkbox" id="ink"> توفير الحبر</label>
+  <label>الكثافة <input type="range" id="density" min="0.5" max="2" step="0.1" value="1"></label>
+  <label>سمك الخط <input type="range" id="lw" min="0.4" max="3" step="0.1" value="1"></label>
+  <label>التدوير <input type="range" id="rot" min="0" max="45" step="1" value="0"></label>
+</header>
+<main id="main"></main>
+<script type="module" src="/src/gallery.js"></script>
+</body>
+</html>
