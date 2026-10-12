@@ -129,10 +129,10 @@ export function detailsBlock(rows, skin, th, style){
 function tintOf(hex){ const n = parseInt(hex.slice(1), 16); return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},0.12)`; }
 
 /** Kicker label as a pill (layout block). */
-export function kickerBlock(text, skin, th){
+export function kickerBlock(text, skin, th, k = 1){
   if(!has(text)) return null;
   const lab = font(skin, 'label');
-  return {t:'gfx', h:50, min:0.8, gap:0, name:'kicker', mark:false, draw(ctx, x0, x1, top, h){
+  return {t:'gfx', h:50 * k, min:0.8, gap:0, name:'kicker', mark:false, draw(ctx, x0, x1, top, h){
     const size = 26 * h / 50, cx = (x0 + x1) / 2;
     setF(ctx, size, lab.fam, 800);
     const w = Math.min(x1 - x0, ctx.measureText(toAr(text)).width + h * 1.3);
@@ -146,7 +146,8 @@ export function kickerBlock(text, skin, th){
 }
 
 /** Closing banner for posters: ribbon (luxe/heritage), rule + text (modern), coloured pill (joy). */
-export function banner(ctx, skin, th, cx, cy, w, h, text){
+export function banner(ctx, skin, th, cx, cy, w, h, text, k = 1){
+  h = Math.min(h * k, 104);
   if(!has(text)) return;
   const f = font(skin, 'title');
   if(skin.id === 'modern'){
@@ -168,6 +169,9 @@ export function banner(ctx, skin, th, cx, cy, w, h, text){
 export function txt(skin, th, role, text, o){
   const f = font(skin, role === 'intro' || role === 'reason' || role === 'para' ? 'body' : role === 'strong' ? 'bodyB' : role === 'small' ? 'label' : role);
   const color = role === 'title' ? tone(skin, 'title', th) : role === 'name' ? tone(skin, 'name', th) : role === 'small' ? th.muted : th.ink;
-  return Object.assign({t:'text', text, fam:f.fam, w:f.w, color, name:role, rigid:role === 'title' || role === 'name'}, o);
+  const b = Object.assign({t:'text', text, fam:f.fam, w:f.w, color, name:role, rigid:role === 'title' || role === 'name'}, o);
+  // user size factor: scales the preferred size; when shrinking, the minimum follows so the text can really get smaller
+  if(b.k && b.k !== 1){ b.size *= b.k; if(b.min) b.min *= Math.min(1, b.k); }
+  return b;
 }
 export { has, fitOne };

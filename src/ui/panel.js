@@ -50,13 +50,44 @@ function fieldEl(f, d){
   if(f.t === 'text') inp.type = 'text'; else inp.rows = f.rows || 3;
   inp.id = id; inp.dir = 'rtl'; inp.value = d[f.k] == null ? '' : d[f.k];
   if(f.ph) inp.placeholder = f.ph;
-  box.append(lab, inp);
+  const sizable = SIZE_KEYS[state.type].includes(f.k) && !isV1Layout(d);
+  box.append(sizable ? labelRow(lab, f, d) : lab, inp);
   let counter = null;
   if(f.t === 'list'){ counter = document.createElement('span'); counter.className = 'count'; counter.textContent = countText(f.k, inp.value); box.append(counter); }
   if(f.date) box.append(datePicker(f, d, inp));
   if(f.hint){ const h = document.createElement('p'); h.className = 'hint'; h.textContent = arNum(f.hint); box.append(h); }
   inp.addEventListener('input', () => { d[f.k] = inp.value; if(counter) counter.textContent = countText(f.k, inp.value); changed(); });
   return box;
+}
+/** Text elements whose size the user can change (new templates only; v1 layouts keep their fixed sizes). */
+const SIZE_KEYS = {
+  cert:['title', 'intro', 'names', 'reason', 'date'],
+  notice:['kicker', 'title', 'greeting', 'body', 'note', 'closing'],
+  poster:['gKicker', 'gTitle', 'gSub', 'gPoints', 'gFooter', 'hTitle', 'hSub', 'hNames', 'hFooter'],
+  invite:['heading', 'lead', 'occasion', 'desc', 'closing']
+};
+const isV1Layout = d => TYPES[state.type].layouts.some(l => l[0] === d.layout && l[2] === 'v1');
+/** Label with «أ− ١٠٠٪ أ+» size buttons (10 % steps, 60–160 %). The layout engine still keeps everything inside the page. */
+function labelRow(lab, f, d){
+  const row = document.createElement('div'); row.className = 'lab-row';
+  const ctl = document.createElement('span'); ctl.className = 'size-ctl'; ctl.setAttribute('role', 'group'); ctl.setAttribute('aria-label', 'حجم ' + f.l);
+  const pct = document.createElement('span'); pct.className = 'pct';
+  const cur = () => Math.round(((d.sz && d.sz[f.k]) || 1) * 100);
+  const show = () => { pct.textContent = arNum(cur()) + '٪'; minus.disabled = cur() <= 60; plus.disabled = cur() >= 160; };
+  const step = delta => {
+    d.sz = Object.assign({}, d.sz);
+    const v = Math.max(60, Math.min(160, cur() + delta)) / 100;
+    if(v === 1) delete d.sz[f.k]; else d.sz[f.k] = v;
+    show(); changed();
+  };
+  const minus = document.createElement('button'), plus = document.createElement('button');
+  minus.type = plus.type = 'button'; minus.className = plus.className = 'sz';
+  minus.textContent = 'أ−'; plus.textContent = 'أ+';
+  minus.title = 'تصغير'; plus.title = 'تكبير'; minus.setAttribute('aria-label', 'تصغير ' + f.l); plus.setAttribute('aria-label', 'تكبير ' + f.l);
+  minus.addEventListener('click', () => step(-10)); plus.addEventListener('click', () => step(10));
+  ctl.append(minus, pct, plus); show();
+  row.append(lab, ctl);
+  return row;
 }
 /** Date helper under a date field: pick a day and a calendar (ميلادي / هجري / كلاهما); the text stays editable. */
 function datePicker(f, d, inp){

@@ -58,3 +58,28 @@ test('date helper writes Gregorian, Hijri (Umm al-Qura) or both', async ({page})
   await expect(nf).toHaveValue('الثلاثاء، 13 أكتوبر 2026م الموافق 2 جمادى الأولى 1448هـ');
   expect(errors).toEqual([]);
 });
+
+test('size buttons enlarge and shrink a text element without breaking the layout', async ({page}) => {
+  const errors = await openV2(page);
+  const nameRow = page.locator('.lab-row', {has:page.locator('label[for="f-cert-names"]')});
+  const sizeOf = () => page.evaluate(() => { const r = window.__kp.render(1000, 0, true); return r.boxes.filter(b => b.name === 'name').reduce((a, b) => Math.max(a, b.h), 0); });
+  const h0 = await sizeOf();
+  for(let i = 0; i < 6; i++) await nameRow.locator('.sz', {hasText:'أ+'}).click();
+  await expect(nameRow.locator('.pct')).toHaveText('١٦٠٪');
+  await expect(nameRow.locator('.sz', {hasText:'أ+'})).toBeDisabled();
+  const h1 = await sizeOf();
+  expect(h1).toBeGreaterThan(h0 * 1.15);
+  for(let i = 0; i < 10; i++) await nameRow.locator('.sz', {hasText:'أ−'}).click();
+  await expect(nameRow.locator('.pct')).toHaveText('٦٠٪');
+  const h2 = await sizeOf();
+  expect(h2).toBeLessThan(h0 * 0.8);
+  // every element at its largest still fits without overlaps
+  for(const label of ['f-cert-title', 'f-cert-intro', 'f-cert-reason', 'f-cert-date']){
+    const row = page.locator('.lab-row', {has:page.locator(`label[for="${label}"]`)});
+    for(let i = 0; i < 6; i++) await row.locator('.sz', {hasText:'أ+'}).click();
+  }
+  const r = await page.evaluate(() => window.__kp.render(1000, 0, true));
+  expect(overlaps(r.boxes)).toEqual([]);
+  expect(r.over).toBe(false);
+  expect(errors).toEqual([]);
+});

@@ -10,6 +10,8 @@ import { rankText } from '../schema/gender.js';
 import { header, signature, signatureH, stamp, footer, detailsBlock, kickerBlock, banner, txt, image, has } from './common.js';
 
 const gfx = (name, h, draw, o) => Object.assign({t:'gfx', name, h, draw}, o);
+/** User size factor of a field (أ− / أ+ in the panel), clamped to 60–160 %. */
+export const K = (d, key) => Math.max(0.6, Math.min(1.6, (d.sz && d.sz[key]) || 1));
 
 /* ---------------- certificate (1000 × 707) ---------------- */
 export function certificate(skin, opt){
@@ -34,15 +36,15 @@ export function certificate(skin, opt){
     const heroW = skin.hero ? 430 : null;
     const blocks = [
       skin.hero ? gfx('archTop', 54, () => {}, {min:0.5, mark:false}) : null,
-      txt(skin, th, 'title', d.title, {size:56, min:30, lines:1, lh:1.3, gap:0, width:heroW}),
+      txt(skin, th, 'title', d.title, {k:K(d, 'title'), size:56, min:30, lines:1, lh:1.3, gap:0, width:heroW}),
       skin.hero ? null : gfx('divider', 22, (c, x0, x1, top, h) => skin.divider(c, (x0 + x1) / 2, top + h / 2, 160, th), {min:0.6, gap:0.5}),
-      txt(skin, th, 'intro', d.intro, {size:22, min:14, lines:2, lh:1.55, gap:0.7, width:heroW || 760}),
-      txt(skin, th, 'name', name, {size:52, min:24, lines:1, lh:1.32, gap:0.5, width:heroW || 680}),
+      txt(skin, th, 'intro', d.intro, {k:K(d, 'intro'), size:22, min:14, lines:2, lh:1.55, gap:0.7, width:heroW || 760}),
+      txt(skin, th, 'name', name, {k:K(d, 'names'), size:52, min:24, lines:1, lh:1.32, gap:0.5, width:heroW || 680}),
       skin.hero ? null : gfx('rule', 8, (c, x0, x1, top) => skin.rule(c, (x0 + x1) / 2 - 170, (x0 + x1) / 2 + 170, top + 2, th), {gap:0.1, mark:false}),
       has(rec.rank) ? Object.assign(txt(skin, th, 'strong', rankText(rec.rank), {size:25, min:15, lines:1, lh:1.4, gap:0.5, name:'rank'}), {color:th.primary}) : null,
       has(cls) ? txt(skin, th, 'small', 'الصف: ' + cls, {size:17, min:12, lines:1, lh:1.4, gap:0.5}) : null,
-      txt(skin, th, 'reason', d.reason, {size:21, min:13.5, lines:3, lh:1.65, gap:skin.hero ? 1.6 : 0.9, width:660}),
-      has(d.date) ? txt(skin, th, 'small', 'تحريراً في: ' + d.date, {size:14, min:11, lines:1, lh:1.4, gap:0.6, name:'date'}) : null
+      txt(skin, th, 'reason', d.reason, {k:K(d, 'reason'), size:21, min:13.5, lines:3, lh:1.65, gap:skin.hero ? 1.6 : 0.9, width:660}),
+      has(d.date) ? txt(skin, th, 'small', 'تحريراً في: ' + d.date, {k:K(d, 'date'), size:14, min:11, lines:1, lh:1.4, gap:0.6, name:'date'}) : null
     ].filter(Boolean);
     const L = stack(ctx, blocks, {x0:box.x0 + 10, x1:box.x1 - 10, top:hb + 10, bottom:Math.min(sigTop, awardTop) - 10, rhythm:18, valign:'center'});
     if(skin.hero){
@@ -70,14 +72,14 @@ export function notice(skin, opt){
     stamp(ctx, sx + 175, sigTop + sh / 2 + 6, 52, th, false);
     const note = has(d.note) ? 'ملاحظة: ' + d.note : '';
     const blocks = [
-      kickerBlock(d.kicker, skin, th),
-      txt(skin, th, 'title', d.title, {size:68, min:34, lines:2, lh:1.32, gap:0.8}),
+      kickerBlock(d.kicker, skin, th, K(d, 'kicker')),
+      txt(skin, th, 'title', d.title, {k:K(d, 'title'), size:68, min:34, lines:2, lh:1.32, gap:0.8}),
       gfx('divider', 24, (c, x0, x1, top, h) => skin.divider(c, (x0 + x1) / 2, top + h / 2, 180, th), {min:0.6, gap:0.5}),
-      txt(skin, th, 'strong', d.greeting, {size:30, min:18, lines:2, lh:1.5, align:'right', gap:1.1, name:'greeting'}),
-      txt(skin, th, 'para', d.body, {size:28, min:17, lines:9, lh:1.8, align:'right', gap:0.6, name:'body'}),
+      txt(skin, th, 'strong', d.greeting, {k:K(d, 'greeting'), size:30, min:18, lines:2, lh:1.5, align:'right', gap:1.1, name:'greeting'}),
+      txt(skin, th, 'para', d.body, {k:K(d, 'body'), size:28, min:17, lines:9, lh:1.8, align:'right', gap:0.6, name:'body'}),
       detailsBlock(detRows(d), skin, th, opt.details),
-      txt(skin, th, 'small', note, {size:23, min:15, lines:3, lh:1.6, align:'right', gap:1, name:'note'}),
-      Object.assign(txt(skin, th, 'strong', d.closing, {size:29, min:18, lines:2, lh:1.55, gap:1.1, name:'closing'}), {color:th.primary})
+      txt(skin, th, 'small', note, {k:K(d, 'note'), size:23, min:15, lines:3, lh:1.6, align:'right', gap:1, name:'note'}),
+      Object.assign(txt(skin, th, 'strong', d.closing, {k:K(d, 'closing'), size:29, min:18, lines:2, lh:1.55, gap:1.1, name:'closing'}), {color:th.primary})
     ].filter(Boolean);
     const L = stack(ctx, blocks, {x0:box.x0 + 30, x1:box.x1 - 30, top:hb + 36, bottom:sigTop - 20, rhythm:26, valign:'center', maxGap:1.8});
     drawStack(ctx, L);
@@ -93,13 +95,13 @@ export function poster(skin){
     const honor = d.kind === 'honor';
     const footH = 104, footCy = box.y1 - footH / 2;
     const blocks = honor ? [
-      txt(skin, th, 'title', d.hTitle, {size:98, min:44, lines:1, lh:1.25, gap:0}),
-      txt(skin, th, 'small', d.hSub, {size:30, min:18, lines:2, lh:1.45, gap:0.4, name:'sub'}),
+      txt(skin, th, 'title', d.hTitle, {k:K(d, 'hTitle'), size:98, min:44, lines:1, lh:1.25, gap:0}),
+      txt(skin, th, 'small', d.hSub, {k:K(d, 'hSub'), size:30, min:18, lines:2, lh:1.45, gap:0.4, name:'sub'}),
       gfx('divider', 24, (c, x0, x1, top, h) => skin.divider(c, (x0 + x1) / 2, top + h / 2, 190, th), {min:0.6, gap:0.6})
     ] : [
-      has(d.gKicker) ? txt(skin, th, 'small', d.gKicker, {size:30, min:18, lines:1, lh:1.3, gap:0, name:'kicker', color:skin.id === 'joy' ? JOY[2] : th.primary, w:800}) : null,
-      txt(skin, th, 'title', d.gTitle, {size:94, min:44, lines:2, lh:1.22, gap:0.3}),
-      txt(skin, th, 'small', d.gSub, {size:31, min:18, lines:2, lh:1.45, gap:0.4, name:'sub'}),
+      has(d.gKicker) ? txt(skin, th, 'small', d.gKicker, {k:K(d, 'gKicker'), size:30, min:18, lines:1, lh:1.3, gap:0, name:'kicker', color:skin.id === 'joy' ? JOY[2] : th.primary, w:800}) : null,
+      txt(skin, th, 'title', d.gTitle, {k:K(d, 'gTitle'), size:94, min:44, lines:2, lh:1.22, gap:0.3}),
+      txt(skin, th, 'small', d.gSub, {k:K(d, 'gSub'), size:31, min:18, lines:2, lh:1.45, gap:0.4, name:'sub'}),
       gfx('divider', 24, (c, x0, x1, top, h) => skin.divider(c, (x0 + x1) / 2, top + h / 2, 180, th), {min:0.6, gap:0.6})
     ];
     // the heading group takes what it needs (≤ 34% of the page); the list gets the rest
@@ -107,14 +109,14 @@ export function poster(skin){
     const L = stack(ctx, blocks.filter(Boolean), topBox);
     drawStack(ctx, L);
     const listTop = L.bottom + 34, listBottom = box.y1 - footH - 26;
-    if(honor) honorGrid(ctx, skin, th, parseNames(d.hNames), box.x0 + 10, box.x1 - 10, listTop, listBottom);
-    else pointsList(ctx, skin, th, splitLines(d.gPoints).map(cleanPoint).filter(Boolean), box.x0 + 10, box.x1 - 10, listTop, listBottom);
-    banner(ctx, skin, th, W / 2, footCy, Math.min(820, box.x1 - box.x0), 84, honor ? d.hFooter : d.gFooter);
+    if(honor) honorGrid(ctx, skin, th, parseNames(d.hNames), box.x0 + 10, box.x1 - 10, listTop, listBottom, K(d, 'hNames'));
+    else pointsList(ctx, skin, th, splitLines(d.gPoints).map(cleanPoint).filter(Boolean), box.x0 + 10, box.x1 - 10, listTop, listBottom, K(d, 'gPoints'));
+    banner(ctx, skin, th, W / 2, footCy, Math.min(820, box.x1 - box.x0), 84, honor ? d.hFooter : d.gFooter, K(d, honor ? 'hFooter' : 'gFooter'));
   };
 }
 
 /** Numbered points: one column while the font stays ≥ 26 (else 2 columns if that is larger); font ≤ 40, floor 18. */
-function pointsList(ctx, skin, th, pts, x0, x1, top, bottom){
+function pointsList(ctx, skin, th, pts, x0, x1, top, bottom, k = 1){
   const body = font(skin, 'bodyB'), avail = bottom - top;
   if(!pts.length){ line(ctx, 'أضف النقاط من لوحة التحكم', (x0 + x1) / 2, top + avail / 2, x1 - x0, {size:26, fam:body.fam, color:th.muted}); return; }
   if(pts.length > 12) env.OVER = true;
@@ -122,7 +124,7 @@ function pointsList(ctx, skin, th, pts, x0, x1, top, bottom){
   let best = null;
   for(const cols of pts.length > 5 ? [1, 2] : [1]){
     const colW = (x1 - x0 - (cols - 1) * 40) / cols, textW = colW - 92, perCol = Math.ceil(pts.length / cols);
-    for(let fs = 40; fs >= 18; fs -= 0.5){
+    for(let fs = 40 * k; fs >= 18 * Math.min(1, k); fs -= 0.5){
       setF(ctx, fs, body.fam, body.w);
       const lh = fs * 1.45, gap = fs * 0.9;
       const items = pts.map(p => { const ls = wrap(ctx, p, textW); return {ls, h:Math.max(ls.length * lh, fs * 1.9)}; });
@@ -166,7 +168,7 @@ function pointsList(ctx, skin, th, pts, x0, x1, top, bottom){
 }
 
 /** Honor board: chooses 1–3 columns to give names the largest readable size; long names may take two lines. */
-function honorGrid(ctx, skin, th, list, x0, x1, top, bottom){
+function honorGrid(ctx, skin, th, list, x0, x1, top, bottom, k = 1){
   const body = font(skin, 'bodyB'), avail = bottom - top;
   if(!list.length){ line(ctx, 'أضف أسماء المتفوّقين من لوحة التحكم', (x0 + x1) / 2, top + avail / 2, x1 - x0, {size:26, fam:body.fam, color:th.muted}); return; }
   const shown = list.slice(0, 30); if(list.length > 30) env.OVER = true;
@@ -182,7 +184,7 @@ function honorGrid(ctx, skin, th, list, x0, x1, top, bottom){
     const cells = shown.map(e => {
       const clsW = has(e.cls) ? (setF(ctx, rowH * 0.3, body.fam, 700), ctx.measureText(toAr(e.cls)).width + 22) : 0;
       const tw = colW - 64 - clsW;
-      let s = Math.min(rowH * 0.42, 31), ls = [e.name];
+      let s = Math.min(rowH * 0.42, 31 * k), ls = [e.name];
       setF(ctx, s, body.fam, body.w);
       while(s > 17 && ctx.measureText(toAr(e.name)).width > tw){ s -= 0.5; setF(ctx, s, body.fam, body.w); }
       if(ctx.measureText(toAr(e.name)).width > tw){
@@ -236,13 +238,13 @@ export function invitation(skin, opt){
     const heroW = skin.hero ? 600 : null;
     const blocks = [
       skin.hero ? gfx('archTop', 120, () => {}, {min:0.55, mark:false}) : null,
-      txt(skin, th, 'title', d.heading, {size:124, min:50, lines:1, lh:1.2, gap:0, width:heroW}),
+      txt(skin, th, 'title', d.heading, {k:K(d, 'heading'), size:124, min:50, lines:1, lh:1.2, gap:0, width:heroW}),
       skin.hero ? null : gfx('divider', 26, (c, x0, x1, t, h) => skin.divider(c, (x0 + x1) / 2, t + h / 2, 180, th), {min:0.6, gap:0.3}),
-      txt(skin, th, 'intro', d.lead, {size:32, min:19, lines:3, lh:1.65, gap:1, width:heroW || 780}),
-      Object.assign(txt(skin, th, 'name', d.occasion, {size:66, min:30, lines:2, lh:1.3, gap:0.6, width:heroW || 800, name:'occasion'}), {color:th.primary}),
-      Object.assign(txt(skin, th, 'para', d.desc, {size:28, min:17, lines:2, lh:1.55, gap:skin.hero ? 1.6 : 0.5, width:780, name:'desc'}), {color:th.muted}),
+      txt(skin, th, 'intro', d.lead, {k:K(d, 'lead'), size:32, min:19, lines:3, lh:1.65, gap:1, width:heroW || 780}),
+      Object.assign(txt(skin, th, 'name', d.occasion, {k:K(d, 'occasion'), size:66, min:30, lines:2, lh:1.3, gap:0.6, width:heroW || 800, name:'occasion'}), {color:th.primary}),
+      Object.assign(txt(skin, th, 'para', d.desc, {k:K(d, 'desc'), size:28, min:17, lines:2, lh:1.55, gap:skin.hero ? 1.6 : 0.5, width:780, name:'desc'}), {color:th.muted}),
       detailsBlock(detRows(d), skin, th, opt.details),
-      Object.assign(txt(skin, th, 'strong', d.closing, {size:34, min:18, lines:2, lh:1.5, gap:1.2, name:'closing'}), {color:th.primary})
+      Object.assign(txt(skin, th, 'strong', d.closing, {k:K(d, 'closing'), size:34, min:18, lines:2, lh:1.5, gap:1.2, name:'closing'}), {color:th.primary})
     ].filter(Boolean);
     const L = stack(ctx, blocks, {x0:box.x0 + 24, x1:box.x1 - 24, top:y + 10, bottom:sigTop - 24, rhythm:28, valign:'center', maxGap:1.9});
     if(skin.hero){
