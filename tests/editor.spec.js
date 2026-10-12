@@ -183,14 +183,14 @@ test('first run asks for the school, and the settings file moves it to another d
 test('template gallery: live thumbnails, click to switch', async ({page}) => {
   const errors = await openV2(page);
   const tpls = page.locator('#layouts .tpl');
-  await expect(tpls).toHaveCount(4);
+  await expect(tpls).toHaveCount(5);                                   // فاخر، ملكي، عصري، تراثي، مبهج
   await page.waitForTimeout(600);
   const inked = await tpls.evaluateAll(bs => bs.map(b => { const c = b.querySelector('canvas'), d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
     let n = 0; for(let i = 0; i < d.length; i += 4) if(d[i] < 200) n++; return n; }));
   expect(inked.every(n => n > 200)).toBe(true);
-  await tpls.nth(2).click();
+  await tpls.nth(3).click();
   expect(await page.evaluate(() => window.__kp.state.docs.cert.layout)).toBe('heritage');
-  await expect(tpls.nth(2)).toHaveAttribute('aria-pressed', 'true');
+  await expect(tpls.nth(3)).toHaveAttribute('aria-pressed', 'true');
   await page.locator('details.older summary').click();
   await page.locator('#layoutsV1 .tpl').first().click();
   expect(await page.evaluate(() => window.__kp.state.docs.cert.layout)).toBe('classic');
