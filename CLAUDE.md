@@ -1,0 +1,88 @@
+# Khuwair Press (مطبعة الخوير) — project memory
+
+## What this is
+An Arabic, right-to-left web app that lets a teacher design school print material and export print-ready A4 files:
+- **Certificates** (شهادات), generated in batch: one page per student from a pasted list.
+- **Parent notices** (إعلانات).
+- **Posters** (ملصقات): guidelines/awareness posters and an honor board (لوحة الشرف).
+- **Invitations** (دعوات).
+
+Owner: أ. رامي الرزقي, a math teacher at مدرسة الخوير للبنين (٥-٩), Bawshar, Muscat, Oman. He signs his work «إعداد أ. رامي الرزقي».
+He may sell the tool to other schools, so school data must stay configurable. Defaults are only defaults.
+
+## Working with the owner
+- Reply in Arabic. Be concise and practical, and give step-by-step instructions.
+- After any visual change, render the affected pages to PNG, look at them yourself, and show him the screenshots.
+- Work in phases. Commit after each completed step with a clear message.
+
+## Current state (v1 — works, keep feature parity)
+- One file, `index.html` (~1100 lines): HTML, CSS, and a single IIFE `<script>`.
+  - Google Fonts: Amiri, Aref Ruqaa, Reem Kufi, Tajawal, IBM Plex Sans Arabic.
+  - jsPDF 2.5.1, loaded from cdnjs.
+- **Rendering**: everything is drawn on `<canvas>` with Canvas 2D.
+  - Page units are 1000 wide: landscape is 1000×707, portrait is 1000×1414 (A-series √2 ratio).
+  - `draw(ctx, px, recIdx)` scales the page by `px/1000`.
+  - `renderTo(px, i)` renders offscreen for export.
+- **State**: `state = {type, theme, tfont, digits, idx, school:{l1,l2,l3,year,director}, logos:{center,side}, docs:{cert,notice,poster,invite}}`.
+  - Logos are PNG data URLs, at most 600 px on the long side.
+  - State is persisted to `localStorage` under the key `khuwair-press-v1`. Any new storage format must migrate from it.
+- **Schema**: `TYPES[type] = {noun, orient, layouts:[[id,label]], fields:[{k,l,t:'text'|'area'|'list'|'check', half, when, hint, ph, rows}]}`.
+  - The side panel UI is generated from this schema (`buildPanel`/`buildFields`).
+- **Templates**: `DRAW[type][layout]` holds the eight layout functions:
+
+  | Type | Layouts |
+  |---|---|
+  | `cert` | `certClassic`, `certBand` |
+  | `notice` | `noticeFormal`, `noticeCard` |
+  | `poster` | `posterGuide`, `posterHonor` |
+  | `invite` | `inviteOrnate`, `inviteBand` |
+
+- **Primitives**:
+  - Text: `T` (draws text, applies digit conversion, uses rtl); `wrap`, `para`, `fitPara`, `fitLine` (Arabic word wrap and auto-fit).
+  - Shapes: `rr` (rounded rect), `starPath` (8-point khatam star made of two squares, inner radius 0.7654·r).
+  - Ornaments: `starField`, `divider`, `cornerStar`, `emblem`.
+  - Blocks: `logoAt`, `officialHeader`, `detailCards`, `sign`, `seal`, `pill`.
+- **Overflow**: the `OVER` flag is set when content cannot fit, and the UI then shows a warning.
+- **Export**:
+  - PDF goes through jsPDF: each page is a JPEG at quality 0.9, 2800 px wide (landscape) or 2000 px wide (portrait).
+  - PNG goes through `canvas.toBlob`.
+  - Delivery uses `window.claude.use('downloads')` when the page runs as a claude.ai artifact, and `<a download>` otherwise.
+
+## Non-negotiables
+- **Text direction and shaping**
+  - RTL everywhere, and `ctx.direction = 'rtl'` on canvas.
+  - Never use `letterSpacing` on Arabic, and never draw Arabic glyph by glyph. Both break letter joining.
+- **Digits**: there is an Arabic-Indic digits toggle, on by default. Every drawn string passes through `toAr()`.
+- **Fonts**
+  - Fonts must be fully loaded before drawing or exporting: call `document.fonts.load(spec, arabicSample)` for each spec.
+  - Never export with fallback fonts.
+  - Use only fonts under the OFL or another open license.
+- **Official wording**: the default header is «سلطنة عمان» / «وزارة التعليم» / «مدرسة الخوير للبنين (٥-٩)». Do not use «وزارة التربية والتعليم». Every line stays editable.
+- **Logos**: do not bundle any official emblem. Logos come only from user uploads.
+- **Print**
+  - A4 at a 300 DPI target. Keep text at least 10 mm from the trim edge.
+  - Colors must stay readable when printed on an ordinary school printer.
+- **Layout**: text must never overflow, clip, or overlap. Every template auto-fits and reports overflow.
+- **Grammar**: Arabic gender agreement matters (الطالب/الطالبة، لتفوّقه/لتفوّقها، له/لها).
+
+## Deployment targets
+1. **Static site on GitHub Pages**, under the owner's account `rezguirami2026-ship-it`, like his other projects.
+2. **One self-contained HTML file**, with fonts and libraries inlined, for offline use at school.
+   If it is also published as a claude.ai artifact:
+   - `window.print()` does nothing, and `<a download>` is blocked. Use the downloads capability instead.
+   - External scripts may load only from cdnjs, jsdelivr, or unpkg, and stylesheets only from Google Fonts. Inline everything else.
+
+## Testing
+- **Playwright visual tests**: render every type × layout × theme to PNG, plus mobile and desktop screenshots of the UI.
+- **Stress cases**:
+  - names of 40+ characters
+  - 60 students in one certificate batch
+  - empty fields
+  - 24 honor-board names
+  - 10 poster points
+  - very long notice text
+- **Assertions**:
+  - no console errors
+  - no overflow except in impossible cases
+  - the PDF page count equals the number of students
+- Look at the screenshots before reporting a task as done.
