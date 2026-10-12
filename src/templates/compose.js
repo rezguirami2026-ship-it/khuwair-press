@@ -111,7 +111,7 @@ export function poster(skin){
   };
 }
 
-/** Numbered points: picks 1 or 2 columns and the largest font (≤ 36) that fits; floor 18. */
+/** Numbered points: one column while the font stays ≥ 26 (else 2 columns if that is larger); font ≤ 40, floor 18. */
 function pointsList(ctx, skin, th, pts, x0, x1, top, bottom){
   const body = font(skin, 'bodyB'), avail = bottom - top;
   if(!pts.length){ line(ctx, 'أضف النقاط من لوحة التحكم', (x0 + x1) / 2, top + avail / 2, x1 - x0, {size:26, fam:body.fam, color:th.muted}); return; }
@@ -129,7 +129,7 @@ function pointsList(ctx, skin, th, pts, x0, x1, top, bottom){
         const col = items.slice(c * perCol, (c + 1) * perCol), h = col.reduce((a, it) => a + it.h, 0) + gap * Math.max(0, col.length - 1);
         tallest = Math.max(tallest, h); if(h > avail) ok = false;
       }
-      if(ok){ if(!best || fs > best.fs) best = {fs, cols, items, lh, gap, colW, textW, perCol, tallest}; break; }
+      if(ok){ if(!best || (best.fs < 26 && fs > best.fs)) best = {fs, cols, items, lh, gap, colW, textW, perCol, tallest}; break; }
     }
   }
   if(!best){ // impossible even at 18: use 2 columns at the floor and clip
