@@ -14,6 +14,9 @@ He may sell the tool to other schools, so school data must stay configurable. De
 - The owner asked that his name not appear anywhere in the app or its sample content. This includes «عن الأداة», even though PROMPT.md asked for «إعداد أ. رامي الرزقي».
 - Sample content is generic: «اسم المدرسة», «أ. اسم المدير», «أ. اسم المعلم», and common first names without family names.
 - Do not reintroduce real people's names into defaults. The product name «مطبعة الخوير» stays.
+- Certificates have no teacher signer by default (an optional extra signer exists). The date sits bottom right, labelled «التاريخ». The stamp area is a clear «مكان الختم» circle.
+- The default frame of the «فاخر» identity is «إطار المخطوطات» (`girih`), chosen by the owner. Other frames stay selectable under «شكل الإطار».
+- Class codes like 1/6 are drawn in typed order, read right to left (`classOrder` in `src/render/text.js`).
 
 ## Working with the owner
 - Reply in Arabic. Be concise and practical, and give step-by-step instructions.

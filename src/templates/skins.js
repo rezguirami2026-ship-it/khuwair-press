@@ -17,7 +17,7 @@ import { ornDivider, seal, awardBadge } from '../ornaments/awards.js';
 export const safe = (W, H) => W > H ? 34 : 48;
 const acc = th => env.gold ? 'gold' : th.accent;
 /** The document's frame style (luxe identity). */
-export const FRAME_STYLES = [['band', 'شريط النجوم'], ['guilloche', 'خطوط دقيقة'], ['corner', 'زوايا رفيعة'], ['girih', 'إطار المخطوطات']];
+export const FRAME_STYLES = [['girih', 'إطار المخطوطات'], ['band', 'شريط النجوم'], ['guilloche', 'خطوط دقيقة'], ['corner', 'زوايا رفيعة']];  // first = default (owner's choice)
 const frameStyle = () => { const d = env.state.docs[env.state.type]; return d && FRAME_STYLES.some(f => f[0] === d.frame) ? d.frame : FRAME_STYLES[0][0]; };
 const O = (th, extra) => Object.assign({color:th.primary, accent:acc(th), ink:env.ink}, extra);
 /** Playful but print-safe colours for the joy identity. */
