@@ -7,7 +7,9 @@ import { draw, renderTo, pageSize } from './render/draw.js';
 import { env } from './render/env.js';
 import { buildPdf } from './export/pdf.js';
 import { logoImg, setLogoImg, refreshLogos, bindLogos } from './ui/logos.js';
-import { schedule, changed, renderPreview, bindPreview } from './ui/preview.js';
+import { schedule, changed, restored, renderPreview, bindPreview } from './ui/preview.js';
+import { initHistory, undo, redo, canUndo, canRedo } from './ui/history.js';
+import { $ } from './ui/dom.js';
 import { buildPanel, bindPanel, fillSchool } from './ui/panel.js';
 import { bindActions } from './ui/actions.js';
 
@@ -21,6 +23,22 @@ fillSchool();
 refreshLogos();
 buildPanel();
 renderPreview();
+
+/* undo / redo: buttons, and Ctrl+Z / Ctrl+Y (inside a text box the browser's own undo keeps working) */
+const histButtons = () => { $('#undoBtn').disabled = !canUndo(); $('#redoBtn').disabled = !canRedo(); };
+initHistory(() => { fillSchool(); buildPanel(); restored(); }, histButtons);
+$('#undoBtn').addEventListener('click', () => { undo(); histButtons(); });
+$('#redoBtn').addEventListener('click', () => { redo(); histButtons(); });
+document.addEventListener('keydown', e => {
+  if(!(e.ctrlKey || e.metaKey) || e.altKey) return;
+  const t = e.target, typing = t && (t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && /^(text|search|)$/.test(t.type)));
+  if(typing) return;
+  const k = e.key.toLowerCase();
+  if(k === 'z' && !e.shiftKey){ e.preventDefault(); undo(); histButtons(); }
+  else if(k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); redo(); histButtons(); }
+});
+document.addEventListener('input', () => setTimeout(histButtons, 700));
+document.addEventListener('click', () => setTimeout(histButtons, 700));
 
 if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', schedule);
 fontsReady().then(schedule);

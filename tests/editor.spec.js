@@ -83,3 +83,28 @@ test('size buttons enlarge and shrink a text element without breaking the layout
   expect(r.over).toBe(false);
   expect(errors).toEqual([]);
 });
+
+test('undo and redo (buttons and keyboard)', async ({page}) => {
+  const errors = await openV2(page);
+  await page.clock.install({time:new Date('2026-10-12T09:00:00+04:00')});
+  const title = page.locator('#f-cert-title');
+  await expect(page.locator('#undoBtn')).toBeDisabled();
+  await title.fill('شهادة تفوّق');
+  await page.clock.runFor(1000);
+  await page.locator('.sw').nth(2).click();                       // theme → navy
+  await page.clock.runFor(1000);
+  await expect(page.locator('#undoBtn')).toBeEnabled();
+  await page.locator('#undoBtn').click();
+  expect(await page.evaluate(() => window.__kp.state.theme)).toBe('maroon');
+  await expect(title).toHaveValue('شهادة تفوّق');
+  await page.locator('#undoBtn').click();
+  await expect(title).toHaveValue('شهادة شكر وتقدير');
+  await page.locator('body').click({position:{x:5, y:5}});
+  await page.keyboard.press('Control+Y');
+  await expect(title).toHaveValue('شهادة تفوّق');
+  await page.keyboard.press('Control+Y');
+  expect(await page.evaluate(() => window.__kp.state.theme)).toBe('navy');
+  await page.keyboard.press('Control+Z');
+  expect(await page.evaluate(() => window.__kp.state.theme)).toBe('maroon');
+  expect(errors).toEqual([]);
+});

@@ -5,12 +5,15 @@ import { draw, pageSize } from '../render/draw.js';
 import { arNum, plural } from '../render/text.js';
 import { logoImg } from './logos.js';
 import { $ } from './dom.js';
+import { note } from './history.js';
 
 let raf = 0, saveTimer = 0, busyNow = false;
 
 export function schedule(){ if(!raf) raf = requestAnimationFrame(() => { raf = 0; renderPreview(); }); }
 /** Any edit: redraw on the next frame and save shortly after. */
-export function changed(){ schedule(); clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+export function changed(){ schedule(); note(); clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+/** After undo/redo: redraw and save without recording a new history step. */
+export function restored(){ schedule(); clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
 
 export function renderPreview(){
   const desk = $('#desk'), cv = $('#page');
