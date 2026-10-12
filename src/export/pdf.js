@@ -1,23 +1,33 @@
-/* PDF export: one A4 page per record, each a JPEG (q 0.9) at 2800 px (landscape) / 2000 px (portrait) wide. */
+/* PDF export: one page per record at the chosen paper size, each a JPEG at the chosen resolution
+ * (300 dpi for print, 150 dpi for a lighter file). Pages are drawn in the export worker. */
 import { jsPDF } from 'jspdf';
 import { TYPES } from '../schema/types.js';
 import { records } from '../schema/parse.js';
-import { renderTo } from '../render/draw.js';
+import { renderPages } from './renderer.js';
+import { QUALITIES, pageMM, pagePx, paperOf } from './paper.js';
 
-const tick = () => new Promise(r => setTimeout(r, 0));
-
-/** onProgress(i, n) is called before each page. Resolves to a PDF Blob. */
-export async function buildPdf(st, logos, onProgress){
-  const land = TYPES[st.type].orient === 'landscape';
-  const recs = st.type === 'cert' ? records(st) : [null];
-  const pdf = new jsPDF({orientation:land ? 'landscape' : 'portrait', unit:'mm', format:'a4', compress:true});
-  const px = land ? 2800 : 2000;
-  for(let i = 0; i < recs.length; i++){
-    if(onProgress) onProgress(i, recs.length);
-    await tick();
-    const c = renderTo(st, logos, px, i);
-    if(i) pdf.addPage();
-    pdf.addImage(c.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, land ? 297 : 210, land ? 210 : 297, undefined, 'FAST');
-  }
-  return pdf.output('blob');
+/** opts: {quality:'print'|'light', onProgress(done, total), signal}. Resolves to a Blob, or null if cancelled. */
+export async function buildPdf(st, logos, opts = {}){
+  const q = QUALITIES[opts.quality] || QUALITIES.print, land = TYPES[st.type].orient === 'landscape';
+  const n = st.type === 'cert' ? records(st).length : 1, [wmm, hmm] = pageMM(st);
+  const pdf = new jsPDF({orientation:land ? 'landscape' : 'portrait', unit:'mm', format:paperOf(st).toLowerCase(), compress:true});
+  let done = 0;
+  if(opts.onProgress) opts.onProgress(0, n);
+  const pages = new Array(n);
+  const engine = await renderPages(st, logos, [...Array(n).keys()], {px:pagePx(st, opts.quality), mime:'image/jpeg', quality:q.jpeg, signal:opts.signal,
+    onPage(i, bytes){
+      pages[i] = bytes;
+      // add pages strictly in order as they arrive
+      while(done < n && pages[done]){
+        if(done) pdf.addPage();
+        pdf.addImage(pages[done], 'JPEG', 0, 0, wmm, hmm, undefined, 'NONE');
+        pages[done] = true; done++;
+        if(opts.onProgress) opts.onProgress(done, n);
+      }
+    }});
+  if(opts.signal && opts.signal.cancelled) return null;
+  if(done !== n) throw new Error('missing pages');
+  const blob = pdf.output('blob');
+  blob.engine = engine;
+  return blob;
 }

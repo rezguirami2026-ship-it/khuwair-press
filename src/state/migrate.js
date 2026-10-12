@@ -11,7 +11,7 @@ export const VERSION = 2;
 
 export function freshState(){
   return {
-    v:VERSION, type:'cert', theme:'maroon', tfont:'auto', digits:true, gold:true, ink:false, idx:0,
+    v:VERSION, type:'cert', theme:'maroon', tfont:'auto', digits:true, gold:true, ink:false, quality:'print', idx:0,
     school:defaultSchool(),
     logos:{center:null, side:null, signature:null, stamp:null},
     docs:Object.fromEntries(Object.keys(TYPES).map(t => [t, defaults(t)]))
@@ -22,7 +22,7 @@ export function freshState(){
 export function migrate(saved){
   const st = freshState();
   if(!saved || typeof saved !== 'object' || (saved.v !== 1 && saved.v !== 2)) return st;
-  ['type','theme','tfont','digits','gold','ink'].forEach(k => { if(saved[k] !== undefined) st[k] = saved[k]; });
+  ['type','theme','tfont','digits','gold','ink','quality'].forEach(k => { if(saved[k] !== undefined) st[k] = saved[k]; });
   if(!TYPES[st.type]) st.type = 'cert';
   if(!THEMES[st.theme]) st.theme = 'maroon';
   if(saved.v === 1 && st.tfont === 'ruqaa') st.tfont = 'auto'; // v1 default; v1 layouts still draw Ruqaa under 'auto'

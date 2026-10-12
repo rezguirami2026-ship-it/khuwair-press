@@ -7,8 +7,9 @@ import { rr } from './shapes.js';
 /** Draws an uploaded logo fitted into mw×mh around (cx, cy); returns false when that slot is empty. */
 export function logoAt(ctx, key, cx, cy, mw, mh, tile){
   const img = env.logos[key];
-  if(!img || !img.naturalWidth) return false;
-  const k = Math.min(mw / img.naturalWidth, mh / img.naturalHeight), w = img.naturalWidth * k, h = img.naturalHeight * k;
+  const iw = img && (img.naturalWidth || img.width), ih = img && (img.naturalHeight || img.height); // <img> or ImageBitmap (worker)
+  if(!iw) return false;
+  const k = Math.min(mw / iw, mh / ih), w = iw * k, h = ih * k;
   if(tile){ ctx.save(); ctx.fillStyle = '#FFFFFF'; rr(ctx, cx - w / 2 - 12, cy - h / 2 - 10, w + 24, h + 20, 12); ctx.fill(); ctx.restore(); }
   ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h);
   return true;

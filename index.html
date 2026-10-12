@@ -41,9 +41,24 @@
         <button class="btn small" type="button" id="next">التالي</button>
       </div>
       <p class="warn" id="warn" hidden>النص أطول من مساحة الصفحة، اختصره قليلاً.</p>
+      <div class="export-opts">
+        <label>الجودة
+          <select id="quality">
+            <option value="print">للطباعة (٣٠٠ نقطة/بوصة)</option>
+            <option value="light">ملف أخف (١٥٠ نقطة/بوصة)</option>
+          </select>
+        </label>
+        <label id="paperWrap">المقاس <select id="paper"></select></label>
+      </div>
       <div class="actions">
         <button class="btn primary" type="button" id="pdfBtn">تنزيل PDF</button>
         <button class="btn" type="button" id="pngBtn">صورة PNG</button>
+        <button class="btn" type="button" id="zipBtn" hidden>كل الصور (ZIP)</button>
+      </div>
+      <div class="progress" id="progress" hidden>
+        <progress id="prog" max="1" value="0"></progress>
+        <span id="progTxt" aria-live="polite"></span>
+        <button class="btn small ghost" type="button" id="cancelBtn">إلغاء</button>
       </div>
       <p class="status" id="status" aria-live="polite"></p>
       <p class="tip">عند الطباعة اختر ورق A4 والمقاس الفعلي ١٠٠٪ بدون تصغير.</p>

@@ -25,9 +25,9 @@ export function draw(ctx, st, logos, px, recIdx){
   return {over:env.OVER};
 }
 
-/** Renders one page into a new canvas px wide. */
+/** Renders one page into a new canvas px wide (an OffscreenCanvas when there is no document, e.g. in the worker). */
 export function renderTo(st, logos, px, recIdx){
-  const [W, H] = pageSize(st);
-  const c = document.createElement('canvas'); c.width = px; c.height = Math.round(px * H / W);
+  const [W, H] = pageSize(st), h = Math.round(px * H / W);
+  const c = typeof document !== 'undefined' ? Object.assign(document.createElement('canvas'), {width:px, height:h}) : new OffscreenCanvas(px, h);
   draw(c.getContext('2d'), st, logos, px, recIdx); return c;
 }

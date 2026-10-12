@@ -12,8 +12,9 @@ const has = s => s != null && String(s).trim() !== '';
 /** Draws an uploaded image fitted into mw × mh centred on (cx, cy). Returns the drawn box or null. */
 export function image(ctx, key, cx, cy, mw, mh, o){
   const img = env.logos[key];
-  if(!img || !img.naturalWidth) return null;
-  const k = Math.min(mw / img.naturalWidth, mh / img.naturalHeight), w = img.naturalWidth * k, h = img.naturalHeight * k;
+  const iw = img && (img.naturalWidth || img.width), ih = img && (img.naturalHeight || img.height); // <img> or ImageBitmap (worker)
+  if(!iw) return null;
+  const k = Math.min(mw / iw, mh / ih), w = iw * k, h = ih * k;
   ctx.save();
   if(o && o.alpha) ctx.globalAlpha = o.alpha;
   if(o && o.blend) ctx.globalCompositeOperation = o.blend;

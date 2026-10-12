@@ -49,7 +49,8 @@ export function updateButtons(){
     const n = records(state).length;
     pdf.textContent = 'تنزيل ' + (n === 1 ? 'الشهادة' : n === 2 ? 'الشهادتين' : arNum(n) + ' ' + plural(n, 'شهادة', 'شهادتان', 'شهادات', 'شهادة')) + ' · PDF';
   } else pdf.textContent = 'تنزيل PDF';
-  pdf.disabled = busyNow; $('#pngBtn').disabled = busyNow;
+  pdf.disabled = busyNow; $('#pngBtn').disabled = busyNow; $('#zipBtn').disabled = busyNow;
+  $('#zipBtn').hidden = !(state.type === 'cert' && records(state).length > 1);
 }
 export const isBusy = () => busyNow;
 export function busy(on){ busyNow = on; updateButtons(); }

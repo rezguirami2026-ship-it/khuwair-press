@@ -7,6 +7,7 @@ import { lines, parseNames } from '../schema/parse.js';
 import { toGender } from '../schema/gender.js';
 import { OCCASIONS, presetFor } from '../schema/presets.js';
 import { openImport } from './importer.js';
+import { updateExportControls } from './actions.js';
 import { arNum, plural } from '../render/text.js';
 import { changed, schedule } from './preview.js';
 import { draw, pageSize } from '../render/draw.js';
@@ -198,6 +199,7 @@ export function buildPanel(){
   $$('.chip.font').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.font === state.tfont)));
   $('#digits').checked = state.digits;
   $('#contentTitle').textContent = 'محتوى ' + t.noun;
+  updateExportControls();
   buildFields();
   resetArm(false);
 }
