@@ -72,7 +72,7 @@ He may sell the tool to other schools, so school data must stay configurable. De
   - jsPDF 2.5.1 is an npm dependency. Its optional dependencies are aliased to a stub.
 - `npm run build` produces two outputs:
   - `dist/site/`: GitHub Pages site with relative paths.
-  - `dist/single/khuwair-press.html`: self-contained, about 1.45 MB.
+  - `dist/single/khuwair-press.html`: self-contained, about 2.8 MB (also copied into `dist/site/`).
 - Storage key `khuwair-press-v2`. It migrates from `khuwair-press-v1`, which is never deleted.
 - Test hook: `window.__kp` exists only when the URL has `?test`.
 - Tests: run `npm run build` first, then `npm test`.
