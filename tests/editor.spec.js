@@ -108,3 +108,33 @@ test('undo and redo (buttons and keyboard)', async ({page}) => {
   expect(await page.evaluate(() => window.__kp.state.theme)).toBe('maroon');
   expect(errors).toEqual([]);
 });
+
+test('import names from Excel (with headers) and from an Arabic Windows-1256 CSV', async ({page}) => {
+  const XLSX = await import('xlsx');
+  const errors = await openV2(page);
+  const rows = [['م', 'الاسم', 'الصف', 'المادة', 'المركز'],
+    [1, 'سالم بن محمد الحارثي', '6/1', 'الرياضيات', 1], [2, 'خالد بن سعيد الكندي', '6/2', 'العلوم', 2], [3, 'يوسف بن حمد الرواحي', '6/4', 'اللغة العربية', 3]];
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'المتفوقون');
+  const xlsx = XLSX.write(wb, {type:'buffer', bookType:'xlsx'});
+  const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.locator('.import-btn').first().click()]);
+  await chooser.setFiles({name:'الطلبة.xlsx', mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer:xlsx});
+  const dlg = page.locator('#importDlg');
+  await expect(dlg).toBeVisible();
+  await expect(dlg.locator('.count')).toContainText('٣ أسماء');
+  await dlg.locator('[data-mode="replace"]').click();
+  await expect(page.locator('#f-cert-names')).toHaveValue('سالم بن محمد الحارثي | 6/1 | الرياضيات | 1\nخالد بن سعيد الكندي | 6/2 | العلوم | 2\nيوسف بن حمد الرواحي | 6/4 | اللغة العربية | 3');
+  const recs = await page.evaluate(() => window.__kp.records(window.__kp.state));
+  expect(recs[1]).toEqual({name:'خالد بن سعيد الكندي', cls:'6/2', subject:'العلوم', rank:'2'});
+  // CSV in Windows-1256 without a header row → appended
+  const cp = new TextDecoder('windows-1256'); const enc = {};
+  for(let b = 128; b < 256; b++) enc[cp.decode(new Uint8Array([b]))] = b;
+  const csv = 'أحمد بن علي العامري,5/3\r\nعمر بن ناصر الشكيلي,5/4\r\n';
+  const bytes = Buffer.from([...csv].map(ch => ch.charCodeAt(0) < 128 ? ch.charCodeAt(0) : enc[ch]));
+  const [ch2] = await Promise.all([page.waitForEvent('filechooser'), page.locator('.import-btn').first().click()]);
+  await ch2.setFiles({name:'قائمة.csv', mimeType:'text/csv', buffer:bytes});
+  await expect(dlg.locator('.count')).toContainText('٢');
+  await dlg.locator('[data-mode="append"]').click();
+  await expect(page.locator('#f-cert-names')).toHaveValue(/\nأحمد بن علي العامري - 5\/3\nعمر بن ناصر الشكيلي - 5\/4$/);
+  await expect(page.locator('#pdfBtn')).toContainText('٥ شهادات');
+  expect(errors).toEqual([]);
+});

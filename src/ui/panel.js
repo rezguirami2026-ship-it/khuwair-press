@@ -6,6 +6,7 @@ import { defaults, fmtDateMode } from '../schema/defaults.js';
 import { lines, parseNames } from '../schema/parse.js';
 import { toGender } from '../schema/gender.js';
 import { OCCASIONS, presetFor } from '../schema/presets.js';
+import { openImport } from './importer.js';
 import { arNum, plural } from '../render/text.js';
 import { changed } from './preview.js';
 import { $, $$, say } from './dom.js';
@@ -55,6 +56,16 @@ function fieldEl(f, d){
   let counter = null;
   if(f.t === 'list'){ counter = document.createElement('span'); counter.className = 'count'; counter.textContent = countText(f.k, inp.value); box.append(counter); }
   if(f.date) box.append(datePicker(f, d, inp));
+  if(f.t === 'list' && f.k !== 'gPoints'){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small import-btn'; b.textContent = 'استيراد من Excel أو CSV';
+    b.addEventListener('click', () => openImport(f.l, !!f.import, (ls, mode) => {
+      const cur = String(d[f.k] || '').trim();
+      d[f.k] = mode === 'append' && cur ? cur + '\n' + ls.join('\n') : ls.join('\n');
+      inp.value = d[f.k]; if(counter) counter.textContent = countText(f.k, inp.value);
+      state.idx = 0; changed();
+    }));
+    box.append(b);
+  }
   if(f.hint){ const h = document.createElement('p'); h.className = 'hint'; h.textContent = arNum(f.hint); box.append(h); }
   inp.addEventListener('input', () => { d[f.k] = inp.value; if(counter) counter.textContent = countText(f.k, inp.value); changed(); });
   return box;

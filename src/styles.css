@@ -114,3 +114,16 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15p
 .size-ctl .pct{font-size:12px;color:var(--muted);min-width:3.2em;text-align:center;font-variant-numeric:tabular-nums}
 .history{display:flex;gap:4px;margin-inline-start:auto}
 .top{gap:14px 18px}
+.import-btn{justify-self:start}
+.dlg{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:18px 20px;width:min(560px,calc(100vw - 32px));box-sizing:border-box;box-shadow:0 20px 50px -12px var(--shadow);font-family:var(--f-ui)}
+.dlg::backdrop{background:rgba(10,16,13,.45)}
+.dlg h2{margin:0 0 10px;font-size:19px;font-family:var(--f-display)}
+.dlg-body{display:grid;gap:12px;max-height:min(62vh,560px);overflow:auto}
+.dlg-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.imp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.imp-grid{grid-template-columns:minmax(0,1fr)}}
+.imp-field{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--muted)}
+.imp-field select{font:inherit;font-weight:400;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0}
+.imp-preview{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px}
+.imp-preview ol{margin:0;padding-inline-start:22px}
+.imp-preview li{padding:2px 0}
