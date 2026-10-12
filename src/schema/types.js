@@ -6,11 +6,12 @@ const v1 = (id, label) => [id, label, 'v1'];
 
 export const TYPES = {
   cert:{noun:'الشهادة', orient:'landscape', layouts:[...NEW, v1('classic','إطار كلاسيكي'), v1('band','شريط جانبي')], fields:[
-    {k:'title', l:'عنوان الشهادة', t:'text'},
-    {k:'intro', l:'نص التقديم', t:'text'},
-    {k:'names', l:'أسماء الطلبة', t:'list', rows:7, hint:'اسم في كل سطر والصف بعد شَرطة، مثل: سالم بن محمد - 6/2. يمكنك اللصق من Excel مباشرة. الأسماء الحالية أمثلة.'},
+    {k:'gender', l:'الصياغة', t:'gender'},
+    {k:'title', l:'عنوان الشهادة', t:'text', g:true},
+    {k:'intro', l:'نص التقديم', t:'text', g:true},
+    {k:'names', l:'أسماء الطلبة', t:'list', rows:7, hint:'اسم في كل سطر والصف بعد شَرطة، مثل: سالم بن محمد - 6/2. ويمكن إضافة المادة والمركز: سالم - 6/2 - الرياضيات - 1. أو استورد ملف Excel. الأسماء الحالية أمثلة.', import:true},
     {k:'cls', l:'الصف (لمن لم يُكتب صفّه)', t:'text', ph:'مثال: السادس / 3'},
-    {k:'reason', l:'سبب التكريم', t:'area', rows:3},
+    {k:'reason', l:'سبب التكريم', t:'area', rows:3, g:true, hint:'يمكنك كتابة {المادة} و{المركز} و{الصف} لتُملأ من قائمة الأسماء.'},
     {k:'teacherLabel', l:'صفة الموقّع الأول', t:'text', half:true},
     {k:'teacherName', l:'اسمه', t:'text', half:true},
     {k:'date', l:'التاريخ', t:'text'},
@@ -34,10 +35,11 @@ export const TYPES = {
     {k:'gSub', l:'العنوان الفرعي', t:'text', when:guide},
     {k:'gPoints', l:'النقاط', t:'list', rows:8, when:guide, hint:'نقطة في كل سطر، حتى 12 نقطة.'},
     {k:'gFooter', l:'عبارة الختام', t:'text', when:guide},
-    {k:'hTitle', l:'العنوان', t:'text', when:honor},
-    {k:'hSub', l:'العنوان الفرعي', t:'text', when:honor},
+    {k:'gender', l:'الصياغة', t:'gender', when:honor},
+    {k:'hTitle', l:'العنوان', t:'text', when:honor, g:true},
+    {k:'hSub', l:'العنوان الفرعي', t:'text', when:honor, g:true},
     {k:'hNames', l:'أسماء المتفوّقين', t:'list', rows:9, when:honor, hint:'اسم في كل سطر والصف بعد شَرطة، حتى 30 اسماً. الأسماء الحالية أمثلة.'},
-    {k:'hFooter', l:'عبارة الختام', t:'text', when:honor}
+    {k:'hFooter', l:'عبارة الختام', t:'text', when:honor, g:true}
   ]},
   invite:{noun:'الدعوة', orient:'portrait', layouts:[...NEW, v1('ornate','مزخرفة'), v1('band','شريط علوي')], fields:[
     {k:'heading', l:'الكلمة الكبيرة', t:'text'},

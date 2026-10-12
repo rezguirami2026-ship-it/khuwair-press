@@ -1,11 +1,14 @@
 /* Parsing pasted lists (names with class, poster points) into records. */
 export const lines = s => String(s || '').split('\n').map(x => x.trim()).filter(Boolean);
 
+/** One record per line: name, then optional class, subject and rank, separated by tabs (pasted from Excel),
+ *  « - » or « | ». A line with only name and class keeps v1 behaviour. */
 export function parseNames(s){
   return lines(s).map(l => {
-    const parts = l.split(/\t|\s+[-–—]\s*|\s*[-–—]\s+|\s*\|\s*/);
-    const name = (parts.shift() || '').trim();
-    return {name, cls:parts.join(' ').trim()};
+    const parts = l.split(/\t|\s+[-–—]\s*|\s*[-–—]\s+|\s*\|\s*/).map(p => p.trim());
+    const name = parts.shift() || '';
+    if(parts.length <= 1) return {name, cls:(parts[0] || '')};
+    return {name, cls:parts[0] || '', subject:parts[1] || '', rank:parts.slice(2).join(' ')};
   }).filter(e => e.name);
 }
 export const cleanPoint = s => s.replace(/^\s*(?:[-•*]|[0-9٠-٩]+[.)\-])\s*/, '');

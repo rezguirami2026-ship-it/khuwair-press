@@ -4,6 +4,7 @@ import { TYPES } from '../schema/types.js';
 import { THEMES, PAGE } from '../schema/themes.js';
 import { records } from '../schema/parse.js';
 import { DRAW } from '../templates/index.js';
+import { fillTokens } from '../schema/gender.js';
 
 export const pageSize = st => PAGE[TYPES[st.type].orient];
 
@@ -17,7 +18,10 @@ export function draw(ctx, st, logos, px, recIdx){
   const d = st.docs[st.type], th = THEMES[st.theme] || THEMES.maroon;
   const fn = DRAW[st.type][d.layout] || Object.values(DRAW[st.type])[0];
   const recs = records(st);
-  fn(ctx, d, recs[Math.min(recIdx || 0, recs.length - 1)], th);
+  const rec = recs[Math.min(recIdx || 0, recs.length - 1)];
+  // per-record placeholders ({الاسم} {الصف} {المادة} {المركز}) are resolved before any template sees the text
+  const doc = Object.fromEntries(Object.entries(d).map(([k, v]) => [k, typeof v === 'string' && k !== 'names' ? fillTokens(v, rec) : v]));
+  fn(ctx, doc, rec, th);
   return {over:env.OVER};
 }
 

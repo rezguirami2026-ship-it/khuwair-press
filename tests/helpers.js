@@ -1,6 +1,9 @@
 // Page helpers: open v1 (with an injected test hook) or the v2 build, apply a case, render a page to PNG.
 import { readFileSync } from 'node:fs';
 
+/** Default texts contain today's date: pin the clock so renders do not change from day to day. */
+export const FIXED_NOW = new Date('2026-10-12T09:00:00+04:00');
+
 export const V2_URLS = {single:'/dist/single/khuwair-press.html?test', site:'/dist/site/index.html?test'};
 
 /** Opens the legacy v1 page, exposing the same window.__kp surface as v2's test hook. */
@@ -12,6 +15,7 @@ export async function openV1(page){
     refresh(){ document.querySelectorAll('[data-s]').forEach(inp => { inp.value = state.school[inp.dataset.s] || ''; }); refreshLogos(); buildPanel(); renderPreview(); }};\n})();`;
   const patched = html.replace(/\}\)\(\);\s*<\/script>\s*$/, hook + '\n</script>\n');
   if(patched === html) throw new Error('v1 hook injection failed');
+  await page.clock.setFixedTime(FIXED_NOW);
   await page.route('**/legacy/v1.html', r => r.fulfill({contentType:'text/html; charset=utf-8', body:patched}));
   await page.goto('/legacy/v1.html');
   await page.waitForFunction(() => window.__kp);
@@ -23,6 +27,7 @@ export async function openV2(page, which = 'single'){
   const errors = [];
   page.on('console', m => { if(m.type() === 'error') errors.push(m.text()); });
   page.on('pageerror', e => errors.push(String(e)));
+  await page.clock.setFixedTime(FIXED_NOW);
   await page.goto(V2_URLS[which]);
   await page.waitForFunction(() => window.__kp);
   await page.evaluate(() => window.__kp.fontsReady());

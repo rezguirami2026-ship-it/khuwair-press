@@ -6,6 +6,7 @@ import { setF, wrap, toAr, T } from '../render/text.js';
 import { rr, starPath } from '../render/shapes.js';
 import { stack, drawStack, line, mark } from '../render/layout.js';
 import { font, tone, JOY, safe } from './skins.js';
+import { rankText } from '../schema/gender.js';
 import { header, signature, signatureH, stamp, footer, detailsBlock, kickerBlock, banner, txt, image, has } from './common.js';
 
 const gfx = (name, h, draw, o) => Object.assign({t:'gfx', name, h, draw}, o);
@@ -38,6 +39,7 @@ export function certificate(skin, opt){
       txt(skin, th, 'intro', d.intro, {size:22, min:14, lines:2, lh:1.55, gap:0.7, width:heroW || 760}),
       txt(skin, th, 'name', name, {size:52, min:24, lines:1, lh:1.32, gap:0.5, width:heroW || 680}),
       skin.hero ? null : gfx('rule', 8, (c, x0, x1, top) => skin.rule(c, (x0 + x1) / 2 - 170, (x0 + x1) / 2 + 170, top + 2, th), {gap:0.1, mark:false}),
+      has(rec.rank) ? Object.assign(txt(skin, th, 'strong', rankText(rec.rank), {size:25, min:15, lines:1, lh:1.4, gap:0.5, name:'rank'}), {color:th.primary}) : null,
       has(cls) ? txt(skin, th, 'small', 'الصف: ' + cls, {size:17, min:12, lines:1, lh:1.4, gap:0.5}) : null,
       txt(skin, th, 'reason', d.reason, {size:21, min:13.5, lines:3, lh:1.65, gap:skin.hero ? 1.6 : 0.9, width:660}),
       has(d.date) ? txt(skin, th, 'small', 'تحريراً في: ' + d.date, {size:14, min:11, lines:1, lh:1.4, gap:0.6, name:'date'}) : null

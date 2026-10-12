@@ -4,6 +4,7 @@ import { TYPES } from '../schema/types.js';
 import { THEMES, FONTS, TFONTS } from '../schema/themes.js';
 import { defaults } from '../schema/defaults.js';
 import { lines, parseNames } from '../schema/parse.js';
+import { toGender } from '../schema/gender.js';
 import { arNum, plural } from '../render/text.js';
 import { changed } from './preview.js';
 import { $, $$, say } from './dom.js';
@@ -18,6 +19,23 @@ function countText(k, v){
 function fieldEl(f, d){
   const id = 'f-' + state.type + '-' + f.k;
   const box = document.createElement('div'); box.className = 'field';
+  if(f.t === 'gender'){
+    const lab = document.createElement('span'); lab.className = 'lbl'; lab.textContent = f.l;
+    const chips = document.createElement('div'); chips.className = 'chips'; chips.setAttribute('role', 'group'); chips.setAttribute('aria-label', f.l);
+    [['m', 'طالب'], ['f', 'طالبة']].forEach(([g, label]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label;
+      b.setAttribute('aria-pressed', String((d.gender || 'm') === g));
+      b.addEventListener('click', () => {
+        if((d.gender || 'm') === g) return;
+        d.gender = g;
+        // rewrite every gender-aware field of this document (الطالب/الطالبة، لتفوّقه/لتفوّقها، له/لها …)
+        TYPES[state.type].fields.filter(x => x.g).forEach(x => { if(typeof d[x.k] === 'string') d[x.k] = toGender(d[x.k], g); });
+        buildFields(); changed();
+      });
+      chips.append(b);
+    });
+    box.append(lab, chips); return box;
+  }
   if(f.t === 'check'){
     const lab = document.createElement('label'); lab.className = 'switch';
     const inp = document.createElement('input'); inp.type = 'checkbox'; inp.id = id; inp.checked = !!d[f.k];
