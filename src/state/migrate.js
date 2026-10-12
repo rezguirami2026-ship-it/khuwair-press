@@ -35,6 +35,8 @@ export function migrate(saved){
     if(!TYPES[t].layouts.some(l => l[0] === doc.layout)) doc.layout = TYPES[t].layouts[0][0];
     // Certificates no longer carry a teacher signer by default: drop the old sample signer if it is still untouched
     // (the date then takes its place). A signer the user typed in is kept.
+    // the old sample invitation sentence repeated «المدرسة»; refresh it if the user never changed it
+    if(t === 'invite' && doc.lead === 'يتشرّف مدير المدرسة وأسرة المدرسة بدعوتكم لحضور') doc.lead = defaults('invite').lead;
     if(t === 'cert' && doc.teacherLabel === 'معلم الرياضيات' && ['أ. اسم المعلم', 'أ. رامي الرزقي'].includes(doc.teacherName)){
       doc.teacherLabel = ''; doc.teacherName = '';
     }
