@@ -12,13 +12,13 @@ function mock(V, kind){
     [[0, '#7C5A1E'], [0.22, '#C49A45'], [0.42, '#E9CF86'], [0.55, '#C8A04D'], [0.72, '#9C7429'], [0.86, '#D9B96A'], [1, '#7C5A1E']].forEach(([t, c]) => g.addColorStop(t, c)); return g; };
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, PW, PH);
   const header = (x0, x1, top, sc) => {
-    ['سلطنة عمان', 'وزارة التعليم', 'مدرسة الخوير للبنين (٥-٩)'].forEach((l, i) => T(l, x1, top + (i + 1) * 21 * sc, (i === 2 ? 15.5 : 14.5) * sc, F.sans, i === 2 ? 800 : 700, th.ink, 'right'));
+    ['سلطنة عمان', 'وزارة التعليم', 'اسم المدرسة'].forEach((l, i) => T(l, x1, top + (i + 1) * 21 * sc, (i === 2 ? 15.5 : 14.5) * sc, F.sans, i === 2 ? 800 : 700, th.ink, 'right'));
     T('العام الدراسي', x0, top + 21 * sc, 13 * sc, F.sans, 500, th.muted, 'left');
     T('٢٠٢٦ / ٢٠٢٧م', x0, top + 42 * sc, 14.5 * sc, F.sans, 700, th.ink, 'left');
   };
   const signs = (y, xs) => {
-    T('معلم الرياضيات', xs[0], y, 15, F.sans, 500, th.muted); T('أ. رامي الرزقي', xs[0], y + 30, 20, F.naskh, 700, th.ink);
-    T('مدير المدرسة', xs[1], y, 15, F.sans, 500, th.muted); T('أ. هلال الحسيني', xs[1], y + 30, 20, F.naskh, 700, th.ink);
+    T('معلم الرياضيات', xs[0], y, 15, F.sans, 500, th.muted); T('أ. اسم المعلم', xs[0], y + 30, 20, F.naskh, 700, th.ink);
+    T('مدير المدرسة', xs[1], y, 15, F.sans, 500, th.muted); T('أ. اسم المدير', xs[1], y + 30, 20, F.naskh, 700, th.ink);
   };
   const body = (cy0, fam, titleW) => {
     T('شهادة شكر وتقدير', 500, cy0, 56, fam, titleW || 700, th.primary);
@@ -33,7 +33,7 @@ function mock(V, kind){
     body(212, F.ruqaa);
     O.ornDivider(ctx, 500, 240, 170, {style:'rosette', size:9, color:th.primary, accent:'gold'});
     T('تتقدّم إدارة المدرسة بخالص الشكر والتقدير إلى الطالب', 500, 286, 22, F.naskh, 400, th.ink);
-    T('سالم بن محمد الحارثي', 500, 352, 50, F.ruqaa, 700, th.primary);
+    T('أحمد بن سالم', 500, 352, 50, F.ruqaa, 700, th.primary);
     ctx.fillStyle = gold(330, 370, 340, 2); ctx.fillRect(330, 372, 340, 1.6);
     T('الصف: ٦/١', 500, 402, 17, F.sans, 500, th.muted);
     T('وذلك لتفوّقه الدراسي وتميّزه في مادة الرياضيات خلال الفصل الدراسي الأول،', 500, 446, 21, F.naskh, 400, th.ink);
@@ -51,7 +51,7 @@ function mock(V, kind){
     T('شهادة شكر وتقدير', 500, 210, 50, F.kufi, 700, th.primary);
     O.ornDivider(ctx, 500, 238, 120, {style:'taper', size:8, color:'gold', accent:'gold'});
     T('تتقدّم إدارة المدرسة بخالص الشكر والتقدير إلى الطالب', 500, 284, 20, F.sans, 500, th.muted);
-    T('سالم بن محمد الحارثي', 500, 352, 46, F.kufi, 600, th.ink);
+    T('أحمد بن سالم', 500, 352, 46, F.kufi, 600, th.ink);
     T('الصف: ٦/١', 500, 394, 17, F.sans, 700, th.primary);
     T('وذلك لتفوّقه الدراسي وتميّزه في مادة الرياضيات خلال الفصل الدراسي الأول،', 500, 444, 20, F.sans, 400, th.ink);
     T('متمنّين له دوام التوفيق والنجاح.', 500, 478, 20, F.sans, 400, th.ink);
@@ -69,7 +69,7 @@ function mock(V, kind){
     O.archFrame(ctx, 280, 150, 440, 300, {kind:'scalloped', spring:0.42, color:th.primary, accent:'gold', gap:9});
     T('شهادة شكر وتقدير', 500, 252, 46, F.ruqaa, 700, th.primary);
     T('تتقدّم إدارة المدرسة بخالص الشكر والتقدير إلى الطالب', 500, 296, 19, F.naskh, 400, th.ink);
-    T('سالم بن محمد الحارثي', 500, 360, 44, F.ruqaa, 700, th.primary);
+    T('أحمد بن سالم', 500, 360, 44, F.ruqaa, 700, th.primary);
     T('الصف: ٦/١', 500, 400, 16, F.sans, 600, th.muted);
     T('وذلك لتفوّقه الدراسي وتميّزه في مادة الرياضيات خلال الفصل الدراسي الأول،', 500, 486, 20, F.naskh, 400, th.ink);
     T('متمنّين له دوام التوفيق والنجاح.', 500, 518, 20, F.naskh, 400, th.ink);

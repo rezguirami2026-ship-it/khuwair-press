@@ -15,6 +15,10 @@ for(const c of LEGACY_CASES){
     const p2 = await (await browser.newContext()).newPage();
     await openV1(p1);
     const errors = await openV2(p2);
+    // v2 ships different sample texts; compare the drawing with v1's own sample content on both sides
+    const base = await p1.evaluate(() => JSON.stringify({docs:window.__kp.state.docs, school:window.__kp.state.school}));
+    await p2.evaluate(b => { const {docs, school} = JSON.parse(b), st = window.__kp.state;
+      Object.assign(st.school, school); for(const t of Object.keys(docs)) Object.assign(st.docs[t], docs[t]); }, base);
     const [a, b] = await Promise.all([renderCase(p1, c), renderCase(p2, c)]);
     const A = PNG.sync.read(pngBuffer(a.url)), B = PNG.sync.read(pngBuffer(b.url));
     expect([B.width, B.height]).toEqual([A.width, A.height]);

@@ -23,7 +23,7 @@ test('about: author credit, privacy, licenses', async ({page}) => {
   await page.locator('#aboutBtn').click();
   const dlg = page.locator('#aboutDlg');
   await expect(dlg).toBeVisible();
-  await expect(dlg).toContainText('إعداد أ. رامي الرزقي');
+  await expect(dlg).not.toContainText('رامي');                     // the owner asked not to show his name
   await expect(dlg).toContainText('SIL Open Font License');
   await expect(dlg.locator('#ver')).toHaveText('2.0.0');
   await expect(dlg.locator('.standalone')).toBeHidden();           // the single file does not link to itself

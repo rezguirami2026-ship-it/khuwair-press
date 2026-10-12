@@ -10,6 +10,11 @@ An Arabic, right-to-left web app that lets a teacher design school print materia
 Owner: أ. رامي الرزقي, a math teacher at مدرسة الخوير للبنين (٥-٩), Bawshar, Muscat, Oman. He signs his work «إعداد أ. رامي الرزقي».
 He may sell the tool to other schools, so school data must stay configurable. Defaults are only defaults.
 
+## Decision of 2026-10-13 (overrides older notes)
+- The owner asked that his name not appear anywhere in the app or its sample content. This includes «عن الأداة», even though PROMPT.md asked for «إعداد أ. رامي الرزقي».
+- Sample content is generic: «اسم المدرسة», «أ. اسم المدير», «أ. اسم المعلم», and common first names without family names.
+- Do not reintroduce real people's names into defaults. The product name «مطبعة الخوير» stays.
+
 ## Working with the owner
 - Reply in Arabic. Be concise and practical, and give step-by-step instructions.
 - After any visual change, render the affected pages to PNG, look at them yourself, and show him the screenshots.
@@ -61,7 +66,7 @@ He may sell the tool to other schools, so school data must stay configurable. De
   - Measured: 60 certificates at 300 dpi take about 9 s, and the main thread's longest task is about 0.26 s.
 - Phase 6 polished the app:
   - Light/dark/auto appearance, stored under the localStorage key `khuwair-press-ui-theme`.
-  - The «عن الأداة» dialog (credits «إعداد أ. رامي الرزقي», privacy, shortcuts, licenses).
+  - The «عن الأداة» dialog (privacy, shortcuts, licenses).
   - Keyboard: arrow keys on tabs, templates, and the preview; Ctrl+S downloads the PDF; a skip link.
   - On phones, the download bar is fixed at the bottom of the screen.
   - The site build is a PWA: a manifest, icons from `pwa/` (made by `scripts/make-icons.mjs`), and a generated `sw.js` that precaches every built file.

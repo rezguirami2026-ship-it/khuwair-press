@@ -68,8 +68,8 @@ test('ZIP with one PNG per certificate', async ({page}) => {
   const {name, buf} = await download(page, '#zipBtn');
   expect(name).toBe('شهادة شكر وتقدير - ٣ صور.zip');
   const files = unzipSync(new Uint8Array(buf));
-  expect(Object.keys(files)).toEqual(['1 - سالم بن محمد الحارثي.png', '2 - عبدالله بن سعيد الكندي.png', '3 - يوسف بن حمد الرواحي.png']);
-  const png = PNG.sync.read(Buffer.from(files['2 - عبدالله بن سعيد الكندي.png']));
+  expect(Object.keys(files)).toEqual(['1 - أحمد بن سالم.png', '2 - محمد بن خالد.png', '3 - يوسف بن علي.png']);
+  const png = PNG.sync.read(Buffer.from(files['2 - محمد بن خالد.png']));
   expect([png.width, png.height]).toEqual([1754, 1240]);
   expect(errors).toEqual([]);
 });
