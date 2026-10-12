@@ -5,6 +5,7 @@ import { THEMES, FONTS, TFONTS } from '../schema/themes.js';
 import { defaults } from '../schema/defaults.js';
 import { lines, parseNames } from '../schema/parse.js';
 import { toGender } from '../schema/gender.js';
+import { OCCASIONS, presetFor } from '../schema/presets.js';
 import { arNum, plural } from '../render/text.js';
 import { changed } from './preview.js';
 import { $, $$, say } from './dom.js';
@@ -56,9 +57,27 @@ function fieldEl(f, d){
   inp.addEventListener('input', () => { d[f.k] = inp.value; if(counter) counter.textContent = countText(f.k, inp.value); changed(); });
   return box;
 }
+/** «نصوص جاهزة»: replaces the document's texts with an occasion's wording (names, dates and places are kept). */
+function presetPicker(d){
+  const box = document.createElement('div'); box.className = 'field preset';
+  const lab = document.createElement('label'); lab.htmlFor = 'preset'; lab.textContent = 'نصوص جاهزة لمناسبة';
+  const sel = document.createElement('select'); sel.id = 'preset';
+  const first = document.createElement('option'); first.value = ''; first.textContent = 'اختر مناسبة…'; sel.append(first);
+  for(const [id, label] of OCCASIONS){ if(!presetFor(id, state.type)) continue; const op = document.createElement('option'); op.value = id; op.textContent = label; sel.append(op); }
+  sel.addEventListener('change', () => {
+    const p = presetFor(sel.value, state.type); if(!p) return;
+    const label = sel.selectedOptions[0].textContent;
+    Object.assign(d, p);
+    if(d.gender === 'f') TYPES[state.type].fields.filter(x => x.g).forEach(x => { if(typeof d[x.k] === 'string') d[x.k] = toGender(d[x.k], 'f'); });
+    buildFields(); changed(); say('طُبّقت نصوص «' + label + '». يمكنك التراجع عنها.');
+  });
+  box.append(lab, sel);
+  return box;
+}
 function buildFields(){
   const t = TYPES[state.type], d = curDoc(), box = $('#fields');
   box.textContent = '';
+  box.append(presetPicker(d));
   const fs = t.fields.filter(f => !f.when || f.when(d));
   for(let i = 0; i < fs.length; i++){
     const f = fs[i];
