@@ -20,14 +20,15 @@ export function certificate(skin, opt){
     const W = 1000, H = 707, S = env.state.school;
     const box = skin.page(ctx, W, H, th);
     const hb = header(ctx, skin, th, box, 1, {emblem:!skin.hero});
-    // bottom zone: two signatures and the centre award
-    const sigImg = !!env.logos.signature;
-    const sh = Math.max(signatureH(d.teacherLabel, d.teacherName), signatureH('مدير المدرسة', S.director, 1, sigImg));
+    // bottom zone — right: an optional extra signer, otherwise the date; centre: the award; left: director + stamp
+    const sigImg = !!env.logos.signature, extra = has(d.teacherLabel) || has(d.teacherName);
+    const rightLabel = extra ? d.teacherLabel : (has(d.date) ? 'التاريخ' : ''), rightValue = extra ? d.teacherName : d.date;
+    const sh = Math.max(signatureH(rightLabel, rightValue), signatureH('مدير المدرسة', S.director, 1, sigImg));
     const bottom = box.y1, sigTop = bottom - sh;
     const xr = box.x1 - 150, xl = box.x0 + 150, cx = W / 2;
-    signature(ctx, skin, th, xr, sigTop, d.teacherLabel, d.teacherName, {w:250});
+    signature(ctx, skin, th, xr, sigTop, rightLabel, rightValue, {w:250});
     signature(ctx, skin, th, xl, sigTop, 'مدير المدرسة', S.director, {w:250, sigImage:true});
-    stamp(ctx, xl + 118, bottom - 48, 40, th, d.seal);
+    stamp(ctx, xl + 128, bottom - 46, 42, th, d.seal);
     const ar = 34, awardTop = bottom - 2.45 * ar - 6;
     skin.award(ctx, cx, bottom - ar - 6, ar, th);
     mark('award', cx - ar * 1.1, awardTop, ar * 2.2, bottom - awardTop);
@@ -44,7 +45,7 @@ export function certificate(skin, opt){
       has(rec.rank) ? Object.assign(txt(skin, th, 'strong', rankText(rec.rank), {size:25, min:15, lines:1, lh:1.4, gap:0.5, name:'rank'}), {color:th.primary}) : null,
       has(cls) ? txt(skin, th, 'small', 'الصف: ' + cls, {size:17, min:12, lines:1, lh:1.4, gap:0.5}) : null,
       txt(skin, th, 'reason', d.reason, {k:K(d, 'reason'), size:21, min:13.5, lines:3, lh:1.65, gap:skin.hero ? 1.6 : 0.9, width:660}),
-      has(d.date) ? txt(skin, th, 'small', 'تحريراً في: ' + d.date, {k:K(d, 'date'), size:14, min:11, lines:1, lh:1.4, gap:0.6, name:'date'}) : null
+      extra && has(d.date) ? txt(skin, th, 'small', 'التاريخ: ' + d.date, {k:K(d, 'date'), size:14, min:11, lines:1, lh:1.4, gap:0.6, name:'date'}) : null
     ].filter(Boolean);
     const L = stack(ctx, blocks, {x0:box.x0 + 10, x1:box.x1 - 10, top:hb + 10, bottom:Math.min(sigTop, awardTop) - 10, rhythm:18, valign:'center'});
     if(skin.hero){

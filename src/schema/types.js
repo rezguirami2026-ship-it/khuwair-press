@@ -12,8 +12,8 @@ export const TYPES = {
     {k:'names', l:'أسماء الطلبة', t:'list', rows:7, hint:'اسم في كل سطر والصف بعد شَرطة، مثل: سالم بن محمد - 6/2. ويمكن إضافة المادة والمركز: سالم - 6/2 - الرياضيات - 1. أو استورد ملف Excel. الأسماء الحالية أمثلة.', import:true},
     {k:'cls', l:'الصف (لمن لم يُكتب صفّه)', t:'text', ph:'مثال: السادس / 3'},
     {k:'reason', l:'سبب التكريم', t:'area', rows:3, g:true, hint:'يمكنك كتابة {المادة} و{المركز} و{الصف} لتُملأ من قائمة الأسماء.'},
-    {k:'teacherLabel', l:'صفة الموقّع الأول', t:'text', half:true},
-    {k:'teacherName', l:'اسمه', t:'text', half:true},
+    {k:'teacherLabel', l:'موقّع إضافي (اختياري)', t:'text', half:true, ph:'مثال: معلم الرياضيات'},
+    {k:'teacherName', l:'اسمه', t:'text', half:true, ph:'اتركه فارغاً لإخفائه'},
     {k:'date', l:'التاريخ', t:'text', date:'plain'},
     {k:'seal', l:'إظهار مكان الختم', t:'check'}
   ]},

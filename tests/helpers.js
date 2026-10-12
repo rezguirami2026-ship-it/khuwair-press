@@ -13,8 +13,12 @@ export async function openV1(page){
     render(px, i){ const c = renderTo(px, i); return {url:c.toDataURL('image/png'), over:OVER}; },
     fontsReady(){ return Promise.all(FONT_SPECS.map(f => document.fonts.load(f, 'شهادة تقدير ١٢٣ 123'))).then(() => document.fonts.ready); },
     refresh(){ document.querySelectorAll('[data-s]').forEach(inp => { inp.value = state.school[inp.dataset.s] || ''; }); refreshLogos(); buildPanel(); renderPreview(); }};\n})();`;
-  const patched = html.replace(/\}\)\(\);\s*<\/script>\s*$/, hook + '\n</script>\n');
+  let patched = html.replace(/\}\)\(\);\s*<\/script>\s*$/, hook + '\n</script>\n');
   if(patched === html) throw new Error('v1 hook injection failed');
+  // v2 shows class codes such as 1/6 in typed order (classOrder in src/render/text.js); give v1 the same so parity stays exact
+  const V1_TOAR = "const toAr = s => DIG ? String(s == null ? '' : s).replace(/[0-9]/g, d => AR[d]) : String(s == null ? '' : s);";
+  if(!patched.includes(V1_TOAR)) throw new Error('v1 toAr not found');
+  patched = patched.replace(V1_TOAR, "const toAr = s => { const t = String(s == null ? '' : s).replace(/(^|[^0-9\\u0660-\\u0669\\/])([0-9\\u0660-\\u0669]{1,2})\\/([0-9\\u0660-\\u0669]{1,2})(?![0-9\\u0660-\\u0669\\/])/g, (m, a, x, y) => a + x + '\\u200F/\\u200F' + y); return DIG ? t.replace(/[0-9]/g, d => AR[d]) : t; };");
   await page.clock.setFixedTime(FIXED_NOW);
   await page.route('**/legacy/v1.html', r => r.fulfill({contentType:'text/html; charset=utf-8', body:patched}));
   await page.goto('/legacy/v1.html');

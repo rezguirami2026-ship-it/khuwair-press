@@ -36,3 +36,14 @@ test('name lists: v1 lines, extra columns, Excel tabs', () => {
   expect(parseNames('سالم\t6/1\tالعلوم\tالثاني')).toEqual([{name:'سالم', cls:'6/1', subject:'العلوم', rank:'الثاني'}]);
   expect(parseNames('\n\n  \nخالد - 5/2\n')).toEqual([{name:'خالد', cls:'5/2'}]);
 });
+
+test('class codes keep their typed order (read right to left); dates are untouched', async () => {
+  const { classOrder } = await import('../src/render/text.js');
+  const R = '\u200F';
+  expect(classOrder('1/6')).toBe('1' + R + '/' + R + '6');
+  expect(classOrder('الصف: 6/1')).toBe('الصف: 6' + R + '/' + R + '1');
+  expect(classOrder('أحمد - ١/٦')).toBe('أحمد - ١' + R + '/' + R + '٦');
+  expect(classOrder('13/10/2026')).toBe('13/10/2026');
+  expect(classOrder('2026 / 2027م')).toBe('2026 / 2027م');
+  expect(classOrder('10/12')).toBe('10' + R + '/' + R + '12');
+});

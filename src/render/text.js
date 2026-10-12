@@ -6,8 +6,13 @@ import { FONTS } from '../schema/themes.js';
 const AR = '٠١٢٣٤٥٦٧٨٩';
 /** Always converts to Arabic-Indic digits (UI labels). */
 export const arNum = n => String(n).replace(/[0-9]/g, d => AR[d]);
-/** Converts digits only when the digits toggle is on (everything drawn on the page). */
-export const toAr = s => env.DIG ? String(s == null ? '' : s).replace(/[0-9]/g, d => AR[d]) : String(s == null ? '' : s);
+/** A class code such as «1/6» (two short numbers around a slash) is shown in typing order read right to left
+ *  (1 on the right), as Arabic readers expect. Right-to-left marks around the slash stop the bidi algorithm from
+ *  turning it into one left-to-right number. Longer forms (dates such as 13/10/2026) are left as they are. */
+const RLM = '‏';
+export const classOrder = s => s.replace(/(^|[^0-9٠-٩\/])([0-9٠-٩]{1,2})\/([0-9٠-٩]{1,2})(?![0-9٠-٩\/])/g, (m, a, x, y) => a + x + RLM + '/' + RLM + y);
+/** Converts digits only when the digits toggle is on (everything drawn on the page); applies classOrder always. */
+export const toAr = s => { const t = classOrder(String(s == null ? '' : s)); return env.DIG ? t.replace(/[0-9]/g, d => AR[d]) : t; };
 export const plural = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : (n >= 3 && n <= 10) ? few : many;
 
 export function setF(ctx, size, fam, w){ ctx.font = (w || 400) + ' ' + size + 'px ' + fam; }

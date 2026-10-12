@@ -1,7 +1,8 @@
 /* Frame bands. A band runs around a box; each side is filled with a whole number of motif units stretched to
  * fit the side exactly (no clipped units), and the four corners get their own square piece so sides meet cleanly.
  * Local coordinates for motifs: u runs along the side, v runs inward from the outer edge (0) to the band width (bw). */
-import { opts, paint, solid, scoped, polyPath, TAU } from './core.js';
+import { opts, paint, solid, scoped, polyPath, flat, TAU } from './core.js';
+import { pattern } from './patterns.js';
 import { starPoly, rosette, interlacedStar } from './stars.js';
 
 /* ---- motifs: draw(ctx, u0, unit, bw, o, main, accent) — structure in the main color, detail in the accent (gold) ---- */
@@ -171,3 +172,106 @@ export function fineFrame(ctx, x, y, w, h, o){
 
 export const FRAME_MOTIFS = Object.keys(MOTIFS);
 export const FRAME_CORNERS = Object.keys(CORNERS);
+
+/* ---- certificate-grade frames (phase 3 revision) ---- */
+
+/** Guilloche frame: fine interwoven sine lines (security-print style) along each side, rose-curve medallions
+ *  in the corners. Wave counts are whole numbers per side, so the lines meet the corners cleanly. */
+export function guillocheFrame(ctx, x, y, w, h, o){
+  o = opts(Object.assign({band:30, strands:5}, o));
+  const bw = o.band, box = [x, y, w, h], st = paint(ctx, o.color, box), ac = paint(ctx, o.accent, box);
+  const lw = Math.max(0.45, 0.55 * o.lw), K = o.strands;
+  scoped(ctx, o, () => {
+    for(const s of SIDE(x, y, w, h, bw)){
+      if(s.L <= 0) continue;
+      const n = Math.max(2, Math.round(s.L / (bw * 1.25 / o.density))), A = bw * 0.36, steps = Math.ceil(s.L / 2);
+      ctx.save(); ctx.transform(...s.t);
+      ctx.beginPath(); ctx.rect(0, 0, s.L, bw); ctx.clip();
+      for(let k = 0; k < K; k++){
+        const ph = k * Math.PI / K;
+        ctx.beginPath();
+        for(let i = 0; i <= steps; i++){
+          const u = s.L * i / steps, v = bw / 2 + A * Math.sin(2 * Math.PI * n * u / s.L + ph) * (0.75 + 0.25 * Math.cos(4 * Math.PI * n * u / s.L));
+          i ? ctx.lineTo(u, v) : ctx.moveTo(u, v);
+        }
+        ctx.lineWidth = lw; ctx.strokeStyle = k % 2 ? st : ac; ctx.stroke();
+      }
+      ctx.restore();
+    }
+    for(const t of CORNER_T(x, y, w, h)){
+      ctx.save(); ctx.transform(...t);
+      const c = bw / 2, R = bw * 0.46;
+      ctx.fillStyle = o.bg; ctx.fillRect(1, 1, bw - 2, bw - 2);
+      for(let k = 0; k < 4; k++){
+        ctx.beginPath();
+        for(let i = 0; i <= 240; i++){
+          const a = i / 240 * TAU, r = R * (0.62 + 0.38 * Math.cos(8 * a + k * Math.PI / 4) * Math.cos(a * 2 + k));
+          const px = c + Math.cos(a) * Math.abs(r), py = c + Math.sin(a) * Math.abs(r);
+          i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+        }
+        ctx.lineWidth = lw; ctx.strokeStyle = k % 2 ? st : ac; ctx.stroke();
+      }
+      starPoly(ctx, c, c, bw * 0.12, 8, 2); ctx.fillStyle = ac; ctx.fill();
+      ctx.restore();
+    }
+    // rails: bold outer rule, fine double rule inside
+    ctx.strokeStyle = st; ctx.lineWidth = Math.max(1.4, 2.6 * o.lw); ctx.strokeRect(x, y, w, h);
+    ctx.strokeStyle = ac; ctx.lineWidth = lw * 1.4; ctx.strokeRect(x + bw, y + bw, w - 2 * bw, h - 2 * bw);
+    ctx.lineWidth = lw; ctx.strokeRect(x + bw + 4, y + bw + 4, w - 2 * bw - 8, h - 2 * bw - 8);
+    ctx.strokeStyle = st; ctx.lineWidth = lw; for(const t of CORNER_T(x, y, w, h)){ ctx.save(); ctx.transform(...t); ctx.strokeRect(0, 0, bw, bw); ctx.restore(); }
+  });
+}
+
+/** Fine frame with interlaced-star corner pieces whose tapered gold lines run along the edges, and a small
+ *  rosette breaking the inner rule at the middle of the top and bottom. Restrained, formal. */
+export function cornerFrame(ctx, x, y, w, h, o){
+  o = opts(Object.assign({gap:7, arm:0.16}, o));
+  const box = [x, y, w, h], st = paint(ctx, o.color, box), ac = paint(ctx, o.accent, box), g = o.gap;
+  scoped(ctx, o, () => {
+    ctx.strokeStyle = st; ctx.lineWidth = Math.max(1.6, 2.8 * o.lw); ctx.strokeRect(x, y, w, h);
+    ctx.strokeStyle = ac; ctx.lineWidth = 0.9 * o.lw; ctx.strokeRect(x + g, y + g, w - 2 * g, h - 2 * g);
+    ctx.lineWidth = 0.6 * o.lw; ctx.strokeRect(x + g + 4, y + g + 4, w - 2 * g - 8, h - 2 * g - 8);
+    const arm = Math.min(w, h) * o.arm, r = g * 2.4;
+    for(const t of CORNER_T(x, y, w, h)){
+      ctx.save(); ctx.transform(...t);
+      const c = g + 2;
+      for(const [dx, dy] of [[1, 0], [0, 1]]){            // tapered arms along both edges
+        ctx.beginPath(); ctx.moveTo(c + dx * r, c + dy * r - dx * 2.2 + dy * 0); ctx.lineTo(c + dx * arm, c + dy * arm);
+        ctx.lineTo(c + dx * r - dy * 2.2, c + dy * r); ctx.closePath(); ctx.fillStyle = ac; ctx.fill();
+        ctx.beginPath(); ctx.arc(c + dx * (arm + 6), c + dy * (arm + 6), 2.2, 0, TAU); ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(c, c, r * 1.15, 0, TAU); ctx.fillStyle = o.bg; ctx.fill();
+      interlacedStar(ctx, c, c, r, 8, 2, Object.assign({}, o, {rot:0, alpha:1, color:o.accent, band:r * 0.2}));
+      ctx.restore();
+    }
+    for(const [cx, cy] of [[x + w / 2, y + g + 2]]){   // top only: the bottom centre belongs to the award
+      ctx.beginPath(); ctx.arc(cx, cy, r * 1.5, 0, TAU); ctx.fillStyle = o.bg; ctx.fill();
+      rosette(ctx, cx, cy, r * 1.35, 8, Object.assign({}, o, {layers:1, ring:false, rot:0, alpha:1, fillMode:'line'}));
+    }
+  });
+}
+
+/** Manuscript border: a solid band carrying gold girih strapwork (Hankin 4.8.8, woven as bands), gold rules,
+ *  rosette corner squares. Rich and traditional. */
+export function girihBand(ctx, x, y, w, h, o){
+  o = opts(Object.assign({band:32}, o));
+  const bw = o.band, box = [x, y, w, h], st = paint(ctx, o.color, box), ac = paint(ctx, o.accent, box);
+  scoped(ctx, o, () => {
+    const fill = o.ink ? o.bg : flat(o.color);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(x, y, w, h); ctx.rect(x + bw, y + bw, w - 2 * bw, h - 2 * bw); ctx.clip('evenodd');
+    ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
+    pattern(ctx, '4.8.8', x, y, w, h, {size:bw * 2.1, color:o.ink ? o.color : o.accent, bg:fill, band:Math.max(1.6, bw * 0.09), lw:0.8});
+    ctx.restore();
+    for(const t of CORNER_T(x, y, w, h)){
+      ctx.save(); ctx.transform(...t);
+      ctx.fillStyle = fill; ctx.fillRect(0, 0, bw, bw);
+      rosette(ctx, bw / 2, bw / 2, bw * 0.44, 8, {layers:1, ring:false, color:o.accent, accent:o.accent, bg:fill, fillMode:'line', lw:1.2});
+      ctx.strokeStyle = ac; ctx.lineWidth = 1; ctx.strokeRect(0.5, 0.5, bw - 1, bw - 1);
+      ctx.restore();
+    }
+    ctx.strokeStyle = ac; ctx.lineWidth = 1.2;
+    ctx.strokeRect(x + 2, y + 2, w - 4, h - 4); ctx.strokeRect(x + bw - 2, y + bw - 2, w - 2 * bw + 4, h - 2 * bw + 4);
+    ctx.strokeStyle = st; ctx.lineWidth = 0.8; ctx.strokeRect(x + bw + 4, y + bw + 4, w - 2 * bw - 8, h - 2 * bw - 8);
+  });
+}

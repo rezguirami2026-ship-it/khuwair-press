@@ -7,6 +7,7 @@ import { lines, parseNames } from '../schema/parse.js';
 import { toGender } from '../schema/gender.js';
 import { OCCASIONS, presetFor } from '../schema/presets.js';
 import { openImport } from './importer.js';
+import { FRAME_STYLES } from '../templates/skins.js';
 import { updateExportControls } from './actions.js';
 import { arNum, plural } from '../render/text.js';
 import { changed, schedule } from './preview.js';
@@ -195,6 +196,15 @@ export function buildPanel(){
     kinds.append(b);
   });
   $('#gold').checked = state.gold !== false; $('#ink').checked = !!state.ink;
+  // frame styles of the «فاخر» identity
+  const frames = $('#frames'); frames.textContent = '';
+  $('#frameGroup').hidden = d.layout !== 'luxe';
+  for(const [id, label] of FRAME_STYLES){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label;
+    b.setAttribute('aria-pressed', String((d.frame || FRAME_STYLES[0][0]) === id));
+    b.addEventListener('click', () => { d.frame = id; buildPanel(); changed(); });
+    frames.append(b);
+  }
   $$('.sw').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === state.theme)));
   $$('.chip.font').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.font === state.tfont)));
   $('#digits').checked = state.digits;

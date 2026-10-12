@@ -71,9 +71,13 @@ export const signatureH = (label, name, sc = 1, sigImage = false) =>
 export function stamp(ctx, cx, cy, r, th, placeholder){
   if(image(ctx, 'stamp', cx, cy, r * 2.1, r * 2.1, {alpha:0.92, blend:'multiply', nomark:true})) return true;
   if(!placeholder) return false;
-  ctx.save(); ctx.globalAlpha = 0.6; ctx.setLineDash([3, 4]); ctx.strokeStyle = th.muted; ctx.lineWidth = 1.2;
-  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-  T(ctx, 'الختم', cx, cy + 5, {size:13, fam:FONTS.sans, color:th.muted});
+  // clearly visible: a solid ring, a dashed inner ring and the words «مكان الختم»
+  ctx.save(); ctx.strokeStyle = th.primary; ctx.globalAlpha = 0.85;
+  ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+  ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.arc(cx, cy, r * 0.84, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+  T(ctx, 'مكان', cx, cy - 2, {size:r * 0.36, fam:FONTS.sans, w:700, color:th.primary});
+  T(ctx, 'الختم', cx, cy + r * 0.4, {size:r * 0.36, fam:FONTS.sans, w:700, color:th.primary});
   ctx.restore();
   return true;
 }

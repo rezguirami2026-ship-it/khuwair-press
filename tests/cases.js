@@ -48,6 +48,10 @@ export const NEW_CASES = [
   ...each((type, kind, layout) => ({name:nm(type, kind, layout, 'empty'), type, kind, layout, doc:EMPTY[type], school:{l1:'', l2:'', l3:'', year:'', director:''}, over:false})),
   ...each((type, kind, layout) => ({name:nm(type, kind, layout, 'images'), type, kind, layout, theme:'navy', logos:true, images:true, over:false})),
   ...each((type, kind, layout) => ({name:nm(type, kind, layout, 'ink'), type, kind, layout, theme:'green', ink:true, gold:false, over:false})),
+  ...['band', 'guilloche', 'corner', 'girih'].flatMap(frame => [['cert', null], ['notice', null], ['poster', 'honor'], ['invite', null]].map(([type, kind]) =>
+    ({name:nm(type, kind, 'luxe', 'frame-' + frame), type, kind, layout:'luxe', doc:{frame}, over:false}))),
+  {name:'new-cert-luxe-extra-signer', type:'cert', layout:'luxe', doc:{teacherLabel:'معلم الرياضيات', teacherName:'أ. اسم المعلم'}, over:false},
+  {name:'new-cert-luxe-class-order', type:'cert', layout:'luxe', doc:{names:'أحمد بن سالم - 1/6'}, over:false},
   ...NEW_LAYOUTS.flatMap(layout => [
     {name:nm('cert', null, layout, 'long-name'), type:'cert', layout, doc:{names:LONG_NAME + ' - 9/12', reason:LONG_BODY.slice(0, 260)}, over:false},
     {name:nm('cert', null, layout, '60-last'), type:'cert', layout, doc:{names:NAMES_60}, rec:59, over:false},

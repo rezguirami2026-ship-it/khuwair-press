@@ -26,7 +26,7 @@ export function defaults(type){
     case 'cert': return {layout:'luxe', title:'شهادة شكر وتقدير', intro:'تتقدّم إدارة المدرسة بخالص الشكر والتقدير إلى الطالب',
       names:'أحمد بن سالم - 6/1\nمحمد بن خالد - 6/2\nيوسف بن علي - 6/3', cls:'',
       reason:'وذلك لتفوّقه الدراسي وتميّزه في مادة الرياضيات خلال الفصل الدراسي الأول، متمنّين له دوام التوفيق والنجاح.',
-      teacherLabel:'معلم الرياضيات', teacherName:'أ. اسم المعلم', date:fmtDate(new Date()), seal:true, gender:'m'};
+      teacherLabel:'', teacherName:'', date:fmtDate(new Date()), seal:true, gender:'m'};
     case 'notice': return {layout:'luxe', kicker:'إعلان', title:'اجتماع أولياء الأمور', greeting:'حضرات أولياء أمور الطلبة الكرام،',
       body:'السلام عليكم ورحمة الله وبركاته، وبعد: يسرّ إدارة المدرسة دعوتكم لحضور اجتماع أولياء الأمور، للاطلاع على مستوى أبنائكم الدراسي خلال الفصل الدراسي الأول، والتعاون معاً على دعم تعلّمهم.',
       date:fmtDate(addDays(6), true), time:'10:00 صباحاً', place:'قاعة المدرسة', note:'يمكنكم مقابلة معلمي المواد بعد الاجتماع مباشرة.',

@@ -8,7 +8,7 @@ import { env, headingOverride } from '../render/env.js';
 import { FONTS } from '../schema/themes.js';
 import { rr, paper } from '../render/shapes.js';
 import { pattern } from '../ornaments/patterns.js';
-import { frame, fineFrame } from '../ornaments/frames.js';
+import { frame, fineFrame, guillocheFrame, cornerFrame, girihBand } from '../ornaments/frames.js';
 import { rosette, medallion, starPoly } from '../ornaments/stars.js';
 import { crenellation, archFrame } from '../ornaments/oman.js';
 import { ornDivider, seal, awardBadge } from '../ornaments/awards.js';
@@ -16,6 +16,9 @@ import { ornDivider, seal, awardBadge } from '../ornaments/awards.js';
 /** Safe margin (10 mm from trim) in page units. */
 export const safe = (W, H) => W > H ? 34 : 48;
 const acc = th => env.gold ? 'gold' : th.accent;
+/** The document's frame style (luxe identity). */
+export const FRAME_STYLES = [['band', 'شريط النجوم'], ['guilloche', 'خطوط دقيقة'], ['corner', 'زوايا رفيعة'], ['girih', 'إطار المخطوطات']];
+const frameStyle = () => { const d = env.state.docs[env.state.type]; return d && FRAME_STYLES.some(f => f[0] === d.frame) ? d.frame : FRAME_STYLES[0][0]; };
 const O = (th, extra) => Object.assign({color:th.primary, accent:acc(th), ink:env.ink}, extra);
 /** Playful but print-safe colours for the joy identity. */
 export const JOY = ['#E39B2D', '#23897F', '#D9475E', '#3A72C4'];
@@ -29,11 +32,22 @@ export const SKINS = {
   luxe:{
     id:'luxe', bg:'#FFFFFF',
     fonts:fonts(F('ruqaa', 700), F('ruqaa', 700), F('naskh', 400), F('naskh', 700), F('sans', 500)),
+    /** frame styles: band (khatam band) | guilloche | corner (fine rules + corner pieces) | girih (manuscript border) */
     page(ctx, W, H, th){
-      const land = W > H, m = land ? 18 : 24, bw = land ? 34 : 40;
+      const land = W > H, style = frameStyle();
       paper(ctx, W, H);
-      pattern(ctx, '4.8.8', m + bw, m + bw, W - 2 * (m + bw), H - 2 * (m + bw), {size:land ? 90 : 100, color:th.primary, alpha:0.055, lw:0.9});
-      frame(ctx, m, m, W - 2 * m, H - 2 * m, O(th, {band:bw, motif:'khatam', corner:'rosette'}));
+      if(style === 'corner'){
+        const m = land ? 22 : 30;
+        rosette(ctx, W / 2, H / 2 + (land ? 18 : 0), land ? 250 : 330, 16, {layers:3, fillMode:'line', color:th.primary, accent:th.primary, alpha:0.06, ring:true});
+        cornerFrame(ctx, m, m, W - 2 * m, H - 2 * m, O(th, {gap:land ? 7 : 9}));
+        const p = land ? 66 : 84;
+        return {x0:p, y0:p, x1:W - p, y1:H - p};
+      }
+      const m = land ? 18 : 24, bw = land ? (style === 'guilloche' ? 30 : 34) : 40;
+      pattern(ctx, '4.8.8', m + bw, m + bw, W - 2 * (m + bw), H - 2 * (m + bw), {size:land ? 90 : 100, color:th.primary, alpha:style === 'band' ? 0.055 : 0.035, lw:0.9});
+      if(style === 'guilloche') guillocheFrame(ctx, m, m, W - 2 * m, H - 2 * m, O(th, {band:bw}));
+      else if(style === 'girih') girihBand(ctx, m, m, W - 2 * m, H - 2 * m, O(th, {band:bw}));
+      else frame(ctx, m, m, W - 2 * m, H - 2 * m, O(th, {band:bw, motif:'khatam', corner:'rosette'}));
       const p = m + bw + (land ? 16 : 26);
       return {x0:p, y0:p, x1:W - p, y1:H - p};
     },
