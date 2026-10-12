@@ -133,3 +133,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15p
 @media (max-width:520px){.welcome-grid{grid-template-columns:minmax(0,1fr)}}
 .imp-field input{font:inherit;font-weight:400;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
 .imp-field input:focus{outline:2px solid var(--accent);outline-offset:1px}
+#layouts,#layoutsV1{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:8px}
+.tpl{font:inherit;font-size:13px;display:grid;justify-items:center;gap:5px;padding:6px 4px 5px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);cursor:pointer}
+.tpl:hover{border-color:var(--muted)}
+.tpl[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700;box-shadow:0 0 0 1px var(--accent)}
+.tpl:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tpl canvas{display:block;background:#FFFFFF;border-radius:2px;box-shadow:0 1px 3px var(--shadow);max-width:100%;height:auto}
+.date-row select{width:auto;flex:1 1 7em}
+.date-row input[type=date]{flex:1 1 9em}

@@ -11,9 +11,12 @@ let raf = 0, saveTimer = 0, busyNow = false;
 
 export function schedule(){ if(!raf) raf = requestAnimationFrame(() => { raf = 0; renderPreview(); }); }
 /** Any edit: redraw on the next frame and save shortly after. */
-export function changed(){ schedule(); note(); clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+let editHook = () => {};
+/** Registers a callback run after every edit (template thumbnails). */
+export const onEdit = fn => { editHook = fn; };
+export function changed(){ schedule(); note(); editHook(); clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
 /** After undo/redo: redraw and save without recording a new history step. */
-export function restored(){ schedule(); clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+export function restored(){ schedule(); editHook(); clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
 
 export function renderPreview(){
   const desk = $('#desk'), cv = $('#page');

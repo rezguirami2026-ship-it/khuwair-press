@@ -84,7 +84,7 @@ for(const [label, viewport, dpr] of [['desktop', {width:1366, height:900}, 1], [
       const errors = ver === 'v1' ? (await openV1(page), []) : await openV2(page);
       for(const t of TABS){
         await page.locator(`.tab[data-type="${t}"]`).click();
-        await page.waitForTimeout(150);
+        await page.waitForTimeout(600);
         await page.screenshot({path:`${OUT}/${label}-${t}-${ver}.png`, fullPage:true});
       }
       expect(errors).toEqual([]);

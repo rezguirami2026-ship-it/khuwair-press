@@ -8,7 +8,9 @@ import { toGender } from '../schema/gender.js';
 import { OCCASIONS, presetFor } from '../schema/presets.js';
 import { openImport } from './importer.js';
 import { arNum, plural } from '../render/text.js';
-import { changed } from './preview.js';
+import { changed, schedule } from './preview.js';
+import { draw, pageSize } from '../render/draw.js';
+import { logoImg } from './logos.js';
 import { $, $$, say } from './dom.js';
 
 function countText(k, v){
@@ -69,6 +71,26 @@ function fieldEl(f, d){
   if(f.hint){ const h = document.createElement('p'); h.className = 'hint'; h.textContent = arNum(f.hint); box.append(h); }
   inp.addEventListener('input', () => { d[f.k] = inp.value; if(counter) counter.textContent = countText(f.k, inp.value); changed(); });
   return box;
+}
+/* ---- template gallery: each choice shows a live thumbnail of the current content ---- */
+let thumbTimer = 0;
+/** Redraws the template thumbnails (debounced; v1 thumbnails only while their group is open). */
+export function thumbs(delay){
+  clearTimeout(thumbTimer);
+  thumbTimer = setTimeout(() => {
+    const t = TYPES[state.type], [W, H] = pageSize(state), dpr = Math.min(2, window.devicePixelRatio || 1);
+    const openOld = $('#layoutsV1').parentElement.open;
+    for(const g of ['#layouts', '#layoutsV1']) $(g).style.setProperty('--cols', W > H ? 2 : 4);
+    document.querySelectorAll('.tpl').forEach(b => {
+      if(!openOld && b.closest('#layoutsV1')) return;
+      const cv = b.querySelector('canvas'), wCss = W > H ? 132 : 92, px = Math.round(wCss * dpr);
+      if(cv.width !== px){ cv.width = px; cv.height = Math.round(px * H / W); cv.style.width = wCss + 'px'; }
+      const doc = Object.assign({}, state.docs[state.type], {layout:b.dataset.layout});
+      const st = Object.assign({}, state, {docs:Object.assign({}, state.docs, {[state.type]:doc})});
+      try{ draw(cv.getContext('2d'), st, logoImg, px, state.idx); }catch(e){ console.warn(e); }
+    });
+    if(t) schedule(); // the preview restores the shared render environment for the live page
+  }, delay == null ? 350 : delay);
 }
 /** Text elements whose size the user can change (new templates only; v1 layouts keep their fixed sizes). */
 const SIZE_KEYS = {
@@ -153,11 +175,15 @@ export function buildPanel(){
   $$('.tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.type === state.type)));
   const lay = $('#layouts'), old = $('#layoutsV1'); lay.textContent = ''; old.textContent = '';
   t.layouts.forEach(([id, label, group]) => {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = label;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'tpl'; b.dataset.layout = id;
     b.setAttribute('aria-pressed', String(d.layout === id));
+    const cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
+    const cap = document.createElement('span'); cap.textContent = label;
+    b.append(cv, cap);
     b.addEventListener('click', () => { d.layout = id; buildPanel(); changed(); });
     (group === 'v1' ? old : lay).append(b);
   });
+  thumbs();
   if(t.layouts.some(l => l[2] === 'v1' && l[0] === d.layout)) old.parentElement.open = true;
   const kinds = $('#kinds'); kinds.textContent = '';
   $('#kindGroup').hidden = !t.kinds;

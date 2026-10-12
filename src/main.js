@@ -11,7 +11,8 @@ import { schedule, changed, restored, renderPreview, bindPreview } from './ui/pr
 import { initHistory, undo, redo, canUndo, canRedo } from './ui/history.js';
 import { $ } from './ui/dom.js';
 import { exportSettings, importSettings, isFirstRun, showWelcome } from './ui/school.js';
-import { buildPanel, bindPanel, fillSchool } from './ui/panel.js';
+import { buildPanel, bindPanel, fillSchool, thumbs } from './ui/panel.js';
+import { onEdit } from './ui/preview.js';
 import { bindActions } from './ui/actions.js';
 
 const firstRun = isFirstRun();
@@ -49,7 +50,9 @@ if(firstRun && (!/[?&]test\b/.test(location.search) || /[?&]firstrun\b/.test(loc
 document.addEventListener('click', () => setTimeout(histButtons, 700));
 
 if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', schedule);
-fontsReady().then(schedule);
+fontsReady().then(() => { schedule(); thumbs(0); });
+onEdit(() => thumbs());
+document.querySelector('#layoutsV1').parentElement.addEventListener('toggle', () => thumbs(0));
 
 /* Test hook (Playwright): only with ?test in the URL. */
 if(/[?&]test\b/.test(location.search)){

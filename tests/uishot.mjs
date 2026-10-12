@@ -1,0 +1,20 @@
+// Screenshots of phase-4 UI: welcome dialog, import dialog, gallery + sizes (desktop) and phone.
+import { chromium } from '@playwright/test';
+import XLSX from 'xlsx';
+const b = await chromium.launch();
+const base = 'http://localhost:4321/dist/single/khuwair-press.html';
+let p = await b.newPage({viewport:{width:1280, height:860}});
+await p.goto(base + '?test&firstrun'); await p.waitForTimeout(700);
+await p.screenshot({path:'tests/__output__/ui4-welcome.png'});
+await p.locator('#wSkip').click();
+const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['م','الاسم','الصف','المادة','المركز'],[1,'سالم بن محمد الحارثي','6/1','الرياضيات',1],[2,'خالد بن سعيد الكندي','6/2','العلوم',2],[3,'يوسف بن حمد الرواحي','6/4','اللغة العربية',3]]), 'الفائزون');
+const [ch] = await Promise.all([p.waitForEvent('filechooser'), p.locator('.import-btn').first().click()]);
+await ch.setFiles({name:'الفائزون.xlsx', mimeType:'application/octet-stream', buffer:XLSX.write(wb, {type:'buffer', bookType:'xlsx'})});
+await p.waitForTimeout(400); await p.screenshot({path:'tests/__output__/ui4-import.png'});
+await p.locator('[data-mode="replace"]').click();
+await p.locator('#preset').selectOption('contests'); await p.waitForTimeout(900);
+await p.screenshot({path:'tests/__output__/ui4-desktop.png', fullPage:true});
+const m = await b.newPage({viewport:{width:390, height:844}, deviceScaleFactor:2});
+await m.goto(base + '?test'); await m.waitForTimeout(900);
+await m.screenshot({path:'tests/__output__/ui4-mobile.png', fullPage:true});
+await b.close(); console.log('ok');
