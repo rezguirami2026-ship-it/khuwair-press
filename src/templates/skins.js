@@ -118,6 +118,9 @@ export const SKINS = {
       ctx.save(); ctx.strokeStyle = G;
       ctx.lineWidth = 2.4; ctx.strokeRect(m, m, W - 2 * m, H - 2 * m);
       ctx.lineWidth = 0.9; ctx.strokeRect(m + 8, m + 8, W - 2 * m - 16, H - 2 * m - 16);
+      // '|' marks a frame rule: nothing may cross it (tests)
+      const fi = m + 8, fw = W - 2 * fi, fh = H - 2 * fi;
+      mark('|frame', fi - 1, fi - 1, fw + 2, 2); mark('|frame', fi - 1, H - fi - 1, fw + 2, 2); mark('|frame', fi - 1, fi - 1, 2, fh + 2); mark('|frame', W - fi - 1, fi - 1, 2, fh + 2);
       ctx.restore();
       cornerRosette(ctx, W - m - 4, m + 4, land ? 34 : 40, {color:th.primary, bg, ink:env.ink});
       cornerRosette(ctx, m + 4, H - m - 4, land ? 34 : 40, {color:th.primary, bg, ink:env.ink});
@@ -135,7 +138,8 @@ export const SKINS = {
     divider(ctx, cx, y, half, th){ fleuronRule(ctx, cx, y, half * 1.25, {color:th.primary, ink:env.ink}); },
     /** the award sits in the top-left corner, over the sash; the bottom centre carries an upside-down arch ornament */
     cornerAward(ctx, W, H, th){ const land = W > H; laurelBadge(ctx, land ? 128 : 150, land ? 128 : 150, land ? 52 : 64, {color:th.primary, ink:env.ink}); },
-    award(ctx, cx, cy, r, th){ archOrnament(ctx, cx, cy + r * 0.9, r * 2.6, {size:r * 1.05, flip:true, color:th.primary, ink:env.ink, bg:env.ink ? '#FFFFFF' : this.bg}); },
+    /** bottom centre: the arch stands on a rule just above the frame (upward, like the top one), never crossing it */
+    award(ctx, cx, cy, r, th){ archOrnament(ctx, cx, cy + r, r * 2.6, {size:r * 1.05, color:th.primary, ink:env.ink, bg:env.ink ? '#FFFFFF' : this.bg}); },
     rule(ctx, x0, x1, y, th){ fleuronRule(ctx, (x0 + x1) / 2, y + 2, (x1 - x0) / 2 - 10, {color:th.primary, ink:env.ink}); },
     tone:{title:'primary', name:'primary'}
   },

@@ -20,7 +20,7 @@ for(const c of NEW_CASES){
     if(!c.over){
       expect(overlaps(r.boxes), 'overlapping elements').toEqual([]);
       const W = 1000, H = c.type === 'cert' ? 707 : 1414, m = c.type === 'cert' ? 34 : 48;
-      const outside = r.boxes.filter(b => !b.name.startsWith('~')).filter(b => b.x < m - 0.5 || b.y < m - 0.5 || b.x + b.w > W - m + 0.5 || b.y + b.h > H - m + 0.5).map(b => `${b.name}@${b.x.toFixed(0)},${b.y.toFixed(0)}`);
+      const outside = r.boxes.filter(b => !b.name.startsWith('~') && !b.name.startsWith('|')).filter(b => b.x < m - 0.5 || b.y < m - 0.5 || b.x + b.w > W - m + 0.5 || b.y + b.h > H - m + 0.5).map(b => `${b.name}@${b.x.toFixed(0)},${b.y.toFixed(0)}`);
       expect(outside, 'outside the 10 mm safe margin').toEqual([]);
     }
     expect(png).toMatchSnapshot(`${c.name}.png`, {maxDiffPixelRatio:0.003});

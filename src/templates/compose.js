@@ -32,7 +32,7 @@ export function certificate(skin, opt){
     stamp(ctx, xl + 128, bottom - 46, 42, th, d.seal);
     const ar = 34, awardTop = bottom - 2.45 * ar - 6;
     skin.award(ctx, cx, bottom - ar - 6, ar, th);
-    mark('award', cx - ar * 1.1, awardTop, ar * 2.2, bottom - awardTop);
+    mark('award', cx - ar * 1.1, awardTop, ar * 2.2, bottom + 4 - awardTop);
     // middle stack
     const name = rec.name || 'اسم الطالب', cls = rec.cls || d.cls;
     const heroW = skin.hero ? 430 : null;

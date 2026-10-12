@@ -37,7 +37,8 @@ export function header(ctx, skin, th, box, sc, o){
   });
   const cy = box.y0 + 36 * sc, hx0 = box.hx0 == null ? box.x0 : box.hx0;   // a skin may keep the left column clear of a corner ornament
   if(!image(ctx, 'side', hx0 + 50 * sc, cy, 100 * sc, 74 * sc) && has(S.year)){
-    line(ctx, 'العام الدراسي', hx0, box.y0 + lh, colW * 0.8, {size:13.5 * sc, min:10 * sc, fam:FONTS.sans, w:500, color:th.muted, align:'left', name:'header'});
+    // labels print as clearly as the school lines: dark ink, bold
+    line(ctx, 'العام الدراسي', hx0, box.y0 + lh, colW * 0.8, {size:15 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
     line(ctx, S.year, hx0, box.y0 + 2 * lh, colW * 0.8, {size:15.5 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
   }
   const cx = (box.x0 + box.x1) / 2;
@@ -53,7 +54,7 @@ export function signature(ctx, skin, th, cx, top, label, name, o){
   o = Object.assign({w:250, sc:1, sigImage:false}, o);
   const sc = o.sc, lab = font(skin, 'label'), body = font(skin, 'bodyB');
   let y = top;
-  if(has(label)){ y += 17 * sc; line(ctx, label, cx, y, o.w, {size:16 * sc, min:11 * sc, fam:lab.fam, w:lab.w, color:th.muted, name:'sign'}); }
+  if(has(label)){ y += 18 * sc; line(ctx, label, cx, y, o.w, {size:17.5 * sc, min:11 * sc, fam:FONTS.sans, w:700, color:th.ink, name:'sign'}); }
   if(o.sigImage && env.logos.signature){ image(ctx, 'signature', cx, y + 30 * sc, o.w * 0.75, 50 * sc, {nomark:true}); y += 56 * sc; }
   if(has(name)){ y += 32 * sc; line(ctx, name, cx, y, o.w, {size:21 * sc, min:13 * sc, fam:body.fam, w:body.w, color:th.ink, name:'sign'}); }
   else if(has(label)){
@@ -65,7 +66,7 @@ export function signature(ctx, skin, th, cx, top, label, name, o){
 }
 /** Height a signature needs (for reserving the bottom zone). */
 export const signatureH = (label, name, sc = 1, sigImage = false) =>
-  ((has(label) ? 17 : 0) + (has(name) || has(label) ? 32 : 0) + (sigImage && env.logos.signature ? 56 : 0) + 8) * sc;
+  ((has(label) ? 18 : 0) + (has(name) || has(label) ? 32 : 0) + (sigImage && env.logos.signature ? 56 : 0) + 8) * sc;
 
 /** School stamp: the uploaded stamp image, or a dashed placeholder circle when requested. */
 export function stamp(ctx, cx, cy, r, th, placeholder){
