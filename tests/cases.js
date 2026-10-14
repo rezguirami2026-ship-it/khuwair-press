@@ -35,7 +35,7 @@ export const LEGACY_CASES = [
 export const STRESS_NAMES_60 = NAMES_60;
 
 /* ---- the four new identities (phase 3) ---- */
-export const NEW_LAYOUTS = ['luxe', 'royal', 'modern', 'heritage', 'joy'];
+export const NEW_LAYOUTS = ['luxe', 'royal', 'official', 'executive', 'filigree', 'modern', 'heritage', 'joy'];
 const TYPES4 = ['cert', 'notice', 'poster', 'invite'];
 const each = fn => TYPES4.flatMap(type => (type === 'poster' ? ['guide', 'honor'] : [null]).flatMap(kind => NEW_LAYOUTS.map(layout => fn(type, kind, layout))));
 const nm = (type, kind, layout, tail) => ['new', type, kind, layout, tail].filter(Boolean).join('-');

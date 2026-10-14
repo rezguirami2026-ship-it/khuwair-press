@@ -29,10 +29,23 @@ import inviteJoy from './invite/joy.js';
 import inviteOrnate from './invite/ornate.js';
 import inviteBand from './invite/band.js';
 
+import certOfficial from './cert/official.js';
+import certExecutive from './cert/executive.js';
+import certFiligree from './cert/filigree.js';
+import noticeOfficial from './notice/official.js';
+import noticeExecutive from './notice/executive.js';
+import noticeFiligree from './notice/filigree.js';
+import posterOfficial from './poster/official.js';
+import posterExecutive from './poster/executive.js';
+import posterFiligree from './poster/filigree.js';
+import inviteOfficial from './invite/official.js';
+import inviteExecutive from './invite/executive.js';
+import inviteFiligree from './invite/filigree.js';
+
 export const DRAW = {
-  cert:{luxe:certLuxe, royal:certRoyal, modern:certModern, heritage:certHeritage, joy:certJoy, classic:certClassic, band:certBand},
-  notice:{luxe:noticeLuxe, royal:noticeRoyal, modern:noticeModern, heritage:noticeHeritage, joy:noticeJoy, formal:noticeFormal, card:noticeCard},
-  poster:{luxe:posterLuxe, royal:posterRoyal, modern:posterModern, heritage:posterHeritage, joy:posterJoy,
+  cert:{luxe:certLuxe, royal:certRoyal, filigree:certFiligree, executive:certExecutive, official:certOfficial, modern:certModern, heritage:certHeritage, joy:certJoy, classic:certClassic, band:certBand},
+  notice:{luxe:noticeLuxe, royal:noticeRoyal, filigree:noticeFiligree, executive:noticeExecutive, official:noticeOfficial, modern:noticeModern, heritage:noticeHeritage, joy:noticeJoy, formal:noticeFormal, card:noticeCard},
+  poster:{luxe:posterLuxe, royal:posterRoyal, filigree:posterFiligree, executive:posterExecutive, official:posterOfficial, modern:posterModern, heritage:posterHeritage, joy:posterJoy,
     v1:(ctx, d, rec, th) => (d.kind === 'honor' ? posterHonor : posterGuide)(ctx, d, rec, th)},
-  invite:{luxe:inviteLuxe, royal:inviteRoyal, modern:inviteModern, heritage:inviteHeritage, joy:inviteJoy, ornate:inviteOrnate, band:inviteBand}
+  invite:{luxe:inviteLuxe, royal:inviteRoyal, filigree:inviteFiligree, executive:inviteExecutive, official:inviteOfficial, modern:inviteModern, heritage:inviteHeritage, joy:inviteJoy, ornate:inviteOrnate, band:inviteBand}
 };

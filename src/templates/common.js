@@ -34,9 +34,9 @@ export function header(ctx, skin, th, box, sc, o){
   const colW = W * 0.33, lh = 22 * sc;
   ls.forEach((l, i) => {
     const last = i === ls.length - 1;
-    line(ctx, l, box.x1, box.y0 + (i + 1) * lh, colW, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
+    line(ctx, l, box.hx1 == null ? box.x1 : box.hx1, box.y0 + (i + 1) * lh, colW, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
   });
-  const cy = box.y0 + 36 * sc, hx0 = box.hx0 == null ? box.x0 : box.hx0;   // a skin may keep the left column clear of a corner ornament
+  const cy = box.y0 + 36 * sc, hx0 = box.hx0 == null ? box.x0 : box.hx0;   // a skin may keep the side columns (hx0, hx1) clear of corner ornaments
   if(!image(ctx, 'side', hx0 + 50 * sc, cy, 100 * sc, 74 * sc) && has(S.year)){
     // labels print as clearly as the school lines: dark ink, bold
     line(ctx, 'العام الدراسي', hx0, box.y0 + lh, colW * 0.8, {size:15 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
@@ -72,7 +72,7 @@ function logoHeader(ctx, skin, th, box, sc, o){
     const ls = [S.l1, S.l2, S.l3].filter(has), lh = 22 * sc;
     ls.forEach((l, i) => {
       const last = i === ls.length - 1;
-      line(ctx, l, box.x1, box.y0 + (i + 1) * lh, W * 0.3, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
+      line(ctx, l, box.hx1 == null ? box.x1 : box.hx1, box.y0 + (i + 1) * lh, W * 0.3, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
     });
   }
   // left: the side logo, or the school year in its usual place

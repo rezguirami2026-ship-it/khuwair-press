@@ -3,6 +3,9 @@
  *   modern   — عصري: hairline gold frame with stepped corners, white space, line medallion watermark, gold seal
  *   heritage — عُماني تراثي: ivory paper, door-stud band, fort crenellations, girih field, scalloped arch
  *   joy      — مبهج: rounded colourful frame, confetti of stars, friendly display type (younger grades)
+ *   official — رسمي: security-print guilloche border with guilloche rosettes, faint school-logo watermark, gold badge
+ *   executive — تنفيذي: coloured side panel with a gold geometric pattern and medallion, fine frame, gold seal
+ *   filigree — نقش ذهبي: ivory paper, double gold frame, gold scroll corners, school-logo watermark, laurel badge
  * page() draws the background and frame and returns the content box, which already respects the 10 mm safe margin. */
 import { env, headingOverride } from '../render/env.js';
 import { FONTS } from '../schema/themes.js';
@@ -14,6 +17,7 @@ import { crenellation, archFrame, archRise } from '../ornaments/oman.js';
 import { ornDivider, seal, awardBadge } from '../ornaments/awards.js';
 import { cornerSash, laurelBadge, archOrnament, fleuronRule, cornerRosette } from '../ornaments/royal.js';
 import { goldGradient } from '../ornaments/core.js';
+import { guillocheRosette, guillocheBorder, filigreeCorner } from '../ornaments/prestige.js';
 import { mark } from '../render/layout.js';
 
 /** Safe margin (10 mm from trim) in page units. */
@@ -149,6 +153,99 @@ export const SKINS = {
     rule(ctx, x0, x1, y, th){ fleuronRule(ctx, (x0 + x1) / 2, y + 2, (x1 - x0) / 2 - 10, {color:th.primary, ink:env.ink}); },
     tone:{title:'primary', name:'primary'}
   },
+  official:{
+    id:'official', bg:'#FFFDF8',
+    fonts:fonts(F('naskh', 700), F('ruqaa', 700), F('naskh', 400), F('naskh', 700), F('sans', 600)),
+    page(ctx, W, H, th){
+      const land = W > H, bg = env.ink ? '#FFFFFF' : this.bg, m = land ? 20 : 26, b = land ? 30 : 38;
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      const wy = H / 2 + (land ? 30 : 60);
+      watermark(ctx, W / 2, wy, land ? 300 : 420, () =>
+        guillocheRosette(ctx, W / 2, wy, land ? 210 : 300, {n:18, lines:10, color:th.primary, accent:th.primary, alpha:0.08, disc:false, bg}));
+      guillocheBorder(ctx, m, m, W - 2 * m, H - 2 * m, O(th, {band:b, bg}));
+      const fi = m + b;   // the band's inner rule: nothing may cross it
+      mark('|frame', fi - 1, fi - 1, W - 2 * fi + 2, 2); mark('|frame', fi - 1, H - fi - 1, W - 2 * fi + 2, 2);
+      mark('|frame', fi - 1, fi - 1, 2, H - 2 * fi + 2); mark('|frame', W - fi - 1, fi - 1, 2, H - 2 * fi + 2);
+      const p = fi + (land ? 22 : 30);
+      return {x0:p, y0:p, x1:W - p, y1:H - p};
+    },
+    emblem(ctx, cx, cy, r, th){ guillocheRosette(ctx, cx, cy, r, O(th, {n:12, lines:7, bg:env.ink ? '#FFFFFF' : this.bg})); },
+    divider(ctx, cx, y, half, th){ ornDivider(ctx, cx, y, half, O(th, {style:'diamonds', size:6, bg:env.ink ? '#FFFFFF' : this.bg})); },
+    award(ctx, cx, cy, r, th){ awardBadge(ctx, cx, cy - r * 0.35, r, {color:acc(th), accent:th.primary, ink:env.ink, pleats:36, star:12}); },
+    rule(ctx, x0, x1, y, th){ ctx.save(); ctx.fillStyle = env.gold ? goldH(ctx, x0, x1) : th.accent; ctx.fillRect(x0, y, x1 - x0, 1.2); ctx.fillRect(x0 + 40, y + 4, x1 - x0 - 80, 0.7); ctx.restore(); },
+    tone:{title:'primary', name:'ink'}
+  },
+  executive:{
+    id:'executive', bg:'#FFFFFF',
+    fonts:fonts(F('messiri', 700), F('ruqaa', 700), F('naskh', 400), F('naskh', 700), F('sans', 600)),
+    /** a coloured panel down the right edge (the start side in Arabic) with a gold pattern and medallion */
+    page(ctx, W, H, th){
+      const land = W > H, pw = land ? 150 : 120, px = W - pw;
+      paper(ctx, W, H);
+      ctx.save();
+      if(env.ink){ ctx.strokeStyle = th.primary; ctx.lineWidth = 2; ctx.strokeRect(px + 1, 1, pw - 2, H - 2); }
+      else { ctx.fillStyle = th.primary; ctx.fillRect(px, 0, pw, H); }
+      ctx.restore();
+      pattern(ctx, '4.8.8', px, 0, pw, H, {size:land ? 70 : 64, color:env.ink ? th.primary : acc(th), alpha:env.ink ? 0.25 : 0.4, lw:0.9});
+      const G = env.ink ? th.primary : goldGradient(ctx, px - 14, 0, 14, H);
+      ctx.save(); ctx.fillStyle = G; ctx.fillRect(px - 9, 0, 5, H); ctx.fillRect(px - 2.5, 0, 1.4, H); ctx.restore();
+      const mr = pw * 0.36, my = H * (land ? 0.5 : 0.42), pbg = env.ink ? '#FFFFFF' : th.primary;
+      ctx.save(); ctx.beginPath(); ctx.arc(px + pw / 2, my, mr * 1.12, 0, Math.PI * 2); ctx.fillStyle = pbg; ctx.fill(); ctx.restore();
+      rosette(ctx, px + pw / 2, my, mr, 12, {layers:2, color:acc(th), accent:acc(th), bg:pbg, ink:env.ink});
+      mark('~panel', px - 10, 0, pw + 10, H);
+      // a fine double frame around the content side
+      const m = land ? 24 : 30, fx1 = px - 9 - m * 0.6;
+      watermark(ctx, (m + fx1) / 2, H / 2 + (land ? 30 : 60), land ? 280 : 400, () => {});
+      ctx.save(); ctx.strokeStyle = env.ink ? th.primary : goldGradient(ctx, 0, 0, px, H);
+      ctx.lineWidth = 1.6; ctx.strokeRect(m, m, fx1 - m, H - 2 * m);
+      ctx.lineWidth = 0.7; ctx.strokeRect(m + 6, m + 6, fx1 - m - 12, H - 2 * m - 12);
+      ctx.restore();
+      const p = land ? 58 : 66;
+      return {x0:p, y0:land ? 54 : 66, x1:fx1 - (land ? 26 : 30), y1:H - (land ? 54 : 66), sigInset:land ? 130 : 150};
+    },
+    emblem(ctx, cx, cy, r, th){ rosette(ctx, cx, cy, r, 12, O(th, {layers:2})); },
+    divider(ctx, cx, y, half, th){ ornDivider(ctx, cx, y, half * 0.8, {style:'taper', size:8, color:acc(th), accent:acc(th)}); },
+    award(ctx, cx, cy, r, th){ seal(ctx, cx, cy, r, {color:acc(th), accent:th.primary, scallops:40, star:12, ink:env.ink}); },
+    rule(ctx, x0, x1, y, th){ ctx.save(); ctx.fillStyle = env.gold ? goldH(ctx, x0, x1) : th.accent; ctx.fillRect(x0 + 30, y, x1 - x0 - 60, 1.4); ctx.restore(); },
+    tone:{title:'primary', name:'ink'}
+  },
+  filigree:{
+    id:'filigree', bg:'#FDF9F0',
+    fonts:fonts(F('ruqaa', 700), F('ruqaa', 700), F('naskh', 400), F('naskh', 700), F('sans', 600)),
+    page(ctx, W, H, th){
+      const land = W > H, bg = env.ink ? '#FFFFFF' : this.bg, m = land ? 24 : 30;
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+      const wy = H / 2 + (land ? 30 : 60);
+      watermark(ctx, W / 2, wy, land ? 300 : 420, () =>
+        rosette(ctx, W / 2, wy, land ? 230 : 320, 16, {layers:3, fillMode:'line', color:'#B08A3E', accent:'#B08A3E', alpha:0.09, ring:true, bg}));
+      const G = env.ink ? th.primary : goldH2(ctx, W, H);
+      ctx.save(); ctx.strokeStyle = G;
+      ctx.lineWidth = 3; ctx.strokeRect(m, m, W - 2 * m, H - 2 * m);
+      ctx.lineWidth = 1; ctx.strokeRect(m + 9, m + 9, W - 2 * m - 18, H - 2 * m - 18);
+      ctx.strokeStyle = th.primary; ctx.globalAlpha = 0.5; ctx.lineWidth = 0.7;
+      ctx.strokeRect(m + 14, m + 14, W - 2 * m - 28, H - 2 * m - 28);
+      ctx.restore();
+      const fi = m + 9;
+      mark('|frame', fi - 1, fi - 1, W - 2 * fi + 2, 2); mark('|frame', fi - 1, H - fi - 1, W - 2 * fi + 2, 2);
+      mark('|frame', fi - 1, fi - 1, 2, H - 2 * fi + 2); mark('|frame', W - fi - 1, fi - 1, 2, H - 2 * fi + 2);
+      // corner pieces sit inside the innermost rule
+      const s = land ? 150 : 180, c = m + 14, o = {color:env.ink ? th.primary : 'gold', accent:th.primary, bg, ink:env.ink};
+      for(const [sx, sy] of [[1, 1], [-1, 1], [-1, -1], [1, -1]]){
+        ctx.save(); ctx.translate(sx > 0 ? 0 : W, sy > 0 ? 0 : H); ctx.scale(sx, sy);
+        filigreeCorner(ctx, c, c, s, o);
+        ctx.restore();
+        const z = s * 0.5 + c;
+        mark('~corner', sx > 0 ? 0 : W - z, sy > 0 ? 0 : H - z, z, z);
+      }
+      const p = land ? 70 : 84;
+      return {x0:p, y0:land ? 62 : 80, x1:W - p, y1:H - (land ? 62 : 80), hx0:land ? 130 : 150, hx1:W - (land ? 130 : 150), hxLogo:land ? 130 : 150, sigInset:land ? 190 : 200};
+    },
+    emblem(ctx, cx, cy, r, th){ rosette(ctx, cx, cy, r, 12, O(th, {layers:2, bg:env.ink ? '#FFFFFF' : this.bg})); },
+    divider(ctx, cx, y, half, th){ fleuronRule(ctx, cx, y, half * 1.1, {color:th.primary, ink:env.ink}); },
+    award(ctx, cx, cy, r, th){ laurelBadge(ctx, cx, cy - r * 0.2, r * 0.95, {color:th.primary, ink:env.ink}); },
+    rule(ctx, x0, x1, y, th){ fleuronRule(ctx, (x0 + x1) / 2, y + 2, (x1 - x0) / 2 - 10, {color:th.primary, ink:env.ink}); },
+    tone:{title:'primary', name:'primary'}
+  },
   joy:{
     id:'joy', bg:'#FFFFFF',
     fonts:fonts(F('lalezar', 400), F('lalezar', 400), F('sans', 500), F('sans', 700), F('sans', 700)),
@@ -203,6 +300,13 @@ function confetti(ctx, x, y, w, h, band, k){
   along(w, (t, r) => { piece(x + t, y + band * (0.3 + rnd() * 0.4), r); piece(x + w - t, y + h - band * (0.3 + rnd() * 0.4), rnd()); });
   along(h - 2 * band, (t, r) => { piece(x + band * (0.3 + rnd() * 0.4), y + band + t, r); piece(x + w - band * (0.3 + rnd() * 0.4), y + band + t, rnd()); });
   ctx.restore();
+}
+/** Faint watermark of the uploaded school logo centred at (cx, cy), or the fallback ornament when there is none. */
+function watermark(ctx, cx, cy, size, fallback){
+  const img = env.logos.school, iw = img && (img.naturalWidth || img.width), ih = img && (img.naturalHeight || img.height);
+  if(!iw){ fallback(); return; }
+  const k = Math.min(size / iw, size / ih);
+  ctx.save(); ctx.globalAlpha = 0.07; ctx.drawImage(img, cx - iw * k / 2, cy - ih * k / 2, iw * k, ih * k); ctx.restore();
 }
 /** Gold for the royal frame rules (one gradient across the page). */
 const goldH2 = (ctx, W, H) => goldGradient(ctx, 0, 0, W, H);

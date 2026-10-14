@@ -27,6 +27,11 @@ He may sell the tool to other schools, so school data must stay configurable. De
   - Invitations use the same three-logo header when `school` or `side` is uploaded (instead of the single centre logo or the arch keystone logo).
   - Uploads go through `cleanLogo()` in `ui/logos.js`: the white background touching the edge is flood-filled to transparent (white inside the logo stays), margins are cropped, and logos are kept up to 1000 px for sharp printing.
   - No official emblem is bundled. The owner uploads his own logo files.
+- Three more official-looking identities (2026-10-14), listed after «ملكي». Ornaments live in `ornaments/prestige.js`.
+  - `official` «رسمي»: a guilloche security border with guilloche rosettes in the corners.
+  - `executive` «تنفيذي»: a coloured side panel on the right with a gold pattern and medallion. `~panel` is its keep-out zone.
+  - `filigree` «نقش ذهبي»: a double gold frame with quarter-rosette corner pieces. `~corner` zones; `hx0`/`hx1` keep the header columns clear of them.
+  - All three draw a faint watermark of the uploaded school logo (`watermark()` in `skins.js`).
 - Class codes like 1/6 are drawn in typed order, read right to left (`classOrder` in `src/render/text.js`).
 
 ## Working with the owner
