@@ -13,7 +13,7 @@ export function freshState(){
   return {
     v:VERSION, type:'cert', theme:'maroon', tfont:'auto', digits:true, gold:true, ink:false, quality:'print', idx:0,
     school:defaultSchool(),
-    logos:{center:null, side:null, signature:null, stamp:null},
+    logos:{center:null, side:null, school:null, signature:null, stamp:null},
     docs:Object.fromEntries(Object.keys(TYPES).map(t => [t, defaults(t)]))
   };
 }

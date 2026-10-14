@@ -12,7 +12,7 @@ export function load(){
 export function save(){
   try{ localStorage.setItem(KEY, JSON.stringify(state)); }
   catch(e){
-    try{ const lite = Object.assign({}, state, {logos:{center:null, side:null, signature:null, stamp:null}}); localStorage.setItem(KEY, JSON.stringify(lite)); }catch(e2){}
+    try{ const lite = Object.assign({}, state, {logos:{center:null, side:null, school:null, signature:null, stamp:null}}); localStorage.setItem(KEY, JSON.stringify(lite)); }catch(e2){}
   }
 }
 export const curDoc = () => state.docs[state.type];

@@ -7,7 +7,7 @@ import { $, say } from './dom.js';
 
 export const FORMAT = 'khuwair-press/school';
 const SCHOOL_KEYS = ['l1', 'l2', 'l3', 'year', 'director'];
-const LOGO_KEYS = ['center', 'side', 'signature', 'stamp'];
+const LOGO_KEYS = ['center', 'side', 'school', 'signature', 'stamp'];
 
 /** The shareable part of the state: school lines, images and look — never the documents themselves. */
 export function settingsOf(st){

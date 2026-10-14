@@ -28,6 +28,7 @@ export function image(ctx, key, cx, cy, mw, mh, o){
  *  Returns the header's bottom edge. */
 export function header(ctx, skin, th, box, sc, o){
   o = Object.assign({emblem:true}, o);
+  if(env.logos.school || env.logos.side) return logoHeader(ctx, skin, th, box, sc, o);
   const S = env.state.school, W = box.x1 - box.x0, lab = font(skin, 'label');
   const ls = [S.l1, S.l2, S.l3].filter(has);
   const colW = W * 0.33, lh = 22 * sc;
@@ -46,6 +47,47 @@ export function header(ctx, skin, th, box, sc, o){
     skin.emblem(ctx, cx, cy, 34 * sc, th); mark('emblem', cx - 34 * sc, cy - 34 * sc, 68 * sc, 68 * sc);
   }
   return box.y0 + Math.max(ls.length * lh + 8 * sc, 76 * sc);
+}
+
+/** Size of an uploaded image fitted into mw × mh, or null. */
+const fitSize = (key, mw, mh) => {
+  const img = env.logos[key], iw = img && (img.naturalWidth || img.width), ih = img && (img.naturalHeight || img.height);
+  if(!iw) return null;
+  const k = Math.min(mw / iw, mh / ih);
+  return [iw * k, ih * k];
+};
+/** Header of logos: school logo on the right (instead of the school lines), the centre logo with the school year
+ *  under it, the side logo on the left (e.g. Oman Vision 2040). Logos sit flush with the outer edges. */
+function logoHeader(ctx, skin, th, box, sc, o){
+  const S = env.state.school, W = box.x1 - box.x0, hx0 = box.hx0 == null ? box.x0 : box.hx0;
+  const L = 112 * sc, top = box.y0 - 6 * sc, cy = top + L / 2, colW = W * 0.3;
+  // right: the school logo, or the school lines when only the side logo was given
+  const rs = fitSize('school', colW * 0.75, L);
+  if(rs) image(ctx, 'school', box.x1 - rs[0] / 2, cy, rs[0], rs[1]);
+  else {
+    const ls = [S.l1, S.l2, S.l3].filter(has), lh = 22 * sc;
+    ls.forEach((l, i) => {
+      const last = i === ls.length - 1;
+      line(ctx, l, box.x1, box.y0 + (i + 1) * lh, colW, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
+    });
+  }
+  // left: the side logo, or the school year in its usual place
+  const sd = fitSize('side', Math.max(60 * sc, Math.min(colW * 0.75, (box.x0 + W / 2) - hx0 - 90 * sc)), L * 0.85);
+  const yearMid = !!sd && has(S.year);
+  if(sd) image(ctx, 'side', hx0 + sd[0] / 2, cy, sd[0], sd[1]);
+  else if(has(S.year)){
+    const lh = 22 * sc;
+    line(ctx, 'العام الدراسي', hx0, box.y0 + lh, colW * 0.8, {size:15 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
+    line(ctx, S.year, hx0, box.y0 + 2 * lh, colW * 0.8, {size:15.5 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
+  }
+  // centre: the centre logo (or the skin's emblem), with the school year under it when the left side holds a logo
+  const cx = (box.x0 + box.x1) / 2, yh = yearMid ? 24 * sc : 0, mh = L - yh;
+  if(!image(ctx, 'center', cx, top + mh / 2, W * 0.24, mh) && o.emblem){
+    const r = Math.min(34 * sc, mh / 2 - 2 * sc);
+    skin.emblem(ctx, cx, top + mh / 2, r, th); mark('emblem', cx - r, top + mh / 2 - r, 2 * r, 2 * r);
+  }
+  if(yearMid) line(ctx, 'العام الدراسي ' + S.year, cx, top + L + 2 * sc, W * 0.3, {size:15 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, name:'header'});
+  return top + L + (yearMid ? 10 : 6) * sc;
 }
 
 /** Signature: label, optional signature image, name — or a dotted line to sign by hand when no name is given.

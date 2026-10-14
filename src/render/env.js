@@ -6,7 +6,7 @@ export const env = {
   /** The state being drawn (school header, heading font, digits). */
   state:null,
   /** Decoded images by slot: {center, side, signature, stamp}. */
-  logos:{center:null, side:null, signature:null, stamp:null},
+  logos:{center:null, side:null, school:null, signature:null, stamp:null},
   /** Arabic-Indic digits on/off for this draw. */
   DIG:true,
   /** Set by any block whose content could not fit. */

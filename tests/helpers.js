@@ -62,15 +62,15 @@ export async function renderCase(page, c, px = 1200, withBoxes = false){
         g.beginPath(); g.arc(110, 110, 100, 0, Math.PI * 2); g.stroke(); g.lineWidth = 3; g.beginPath(); g.arc(110, 110, 76, 0, Math.PI * 2); g.stroke();
         g.fillStyle = 'rgba(40,60,160,.85)'; g.fillRect(60, 98, 100, 24);
       } else {
-        cv.width = key === 'center' ? 300 : 240; cv.height = 200;
+        cv.width = key === 'center' ? 300 : key === 'school' ? 160 : 240; cv.height = key === 'school' ? 240 : 200;
         g.fillStyle = key === 'center' ? '#2E6B4F' : '#8A2432'; g.beginPath(); g.arc(cv.width / 2, 100, 90, 0, Math.PI * 2); g.fill();
         g.fillStyle = '#E2B84F'; g.fillRect(cv.width / 2 - 40, 60, 80, 80);
       }
       return cv.toDataURL('image/png');
     };
-    const keys = kp.isV2 ? ['center', 'side', 'signature', 'stamp'] : ['center', 'side'];
+    const keys = kp.isV2 ? ['center', 'side', 'school', 'signature', 'stamp'] : ['center', 'side'];
     for(const key of keys){
-      const want = (key === 'center' || key === 'side') ? c.logos : c.images;
+      const want = key === 'school' ? c.logos && c.images : (key === 'center' || key === 'side') ? c.logos : c.images;
       const url = want ? make(key) : null;
       st.logos[key] = url; kp.setLogoImg(key, url);
       if(url) await new Promise(r => { const t = setInterval(() => { if(kp.logoImg[key]){ clearInterval(t); r(); } }, 10); });
