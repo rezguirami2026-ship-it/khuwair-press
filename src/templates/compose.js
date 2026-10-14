@@ -228,7 +228,10 @@ export function invitation(skin, opt){
     // top: logo or emblem
     const top = box.y0 + 8;
     let y = top;
-    if(!skin.hero){
+    // uploaded school / side logos: the same three-logo header as the certificate
+    const logoTop = !!(env.logos.school || env.logos.side);
+    if(logoTop) y = header(ctx, skin, th, box, 1.3);
+    else if(!skin.hero){
       if(!image(ctx, 'center', cx, top + 60, 200, 116)){ skin.emblem(ctx, cx, top + 54, 50, th); mark('emblem', cx - 50, top + 4, 100, 100); }
       y = top + 128;
     }
@@ -252,7 +255,7 @@ export function invitation(skin, opt){
     if(skin.hero){
       const t = L.items.find(i => i.b.name === 'archTop'), o = L.items.find(i => i.b.name === 'occasion') || L.items.find(i => i.b.name === 'intro');
       if(t && o) skin.hero(ctx, cx - heroW / 2 - 24, t.top + 6, cx + heroW / 2 + 24, o.top + o.h + 22, th);
-      if(t && !image(ctx, 'center', cx, t.top + t.h * 0.62, 120, t.h * 0.5)){ /* the arch keystone carries the ornament */ }
+      if(t && !logoTop && !image(ctx, 'center', cx, t.top + t.h * 0.62, 120, t.h * 0.5)){ /* the arch keystone carries the ornament */ }
     }
     drawStack(ctx, L);
   };

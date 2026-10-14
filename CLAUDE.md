@@ -23,6 +23,7 @@ He may sell the tool to other schools, so school data must stay configurable. De
 - Header logos (2026-10-14): a third upload slot `school` («شعار المدرسة»). When `school` or `side` is uploaded, `logoHeader()` in `common.js` takes over:
   - School logo on the right replaces the school lines; centre logo in the middle; side logo (e.g. Oman Vision 2040) on the left.
   - The school year then moves under the centre logo.
+  - Invitations use the same three-logo header when `school` or `side` is uploaded (instead of the single centre logo or the arch keystone logo).
   - Uploads go through `cleanLogo()` in `ui/logos.js`: the white background touching the edge is flood-filled to transparent (white inside the logo stays), margins are cropped, and logos are kept up to 1000 px for sharp printing.
   - No official emblem is bundled. The owner uploads his own logo files.
 - Class codes like 1/6 are drawn in typed order, read right to left (`classOrder` in `src/render/text.js`).

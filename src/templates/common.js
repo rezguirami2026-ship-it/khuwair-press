@@ -72,8 +72,10 @@ function logoHeader(ctx, skin, th, box, sc, o){
     });
   }
   // left: the side logo, or the school year in its usual place
-  const sd = fitSize('side', Math.max(60 * sc, Math.min(colW * 0.75, (box.x0 + W / 2) - hx0 - 90 * sc)), L * 0.85);
-  const yearMid = !!sd && has(S.year);
+  // the side logo may grow up to the centre logo's actual edge (wide logos like Oman Vision 2040 need the room)
+  const yearMid = !!env.logos.side && has(S.year), cs = fitSize('center', W * 0.24, L - (yearMid ? 24 * sc : 0));
+  const cHalf = cs ? cs[0] / 2 : 40 * sc, gapC = 26 * sc;
+  const sd = fitSize('side', Math.max(60 * sc, Math.min(colW * 0.9, (box.x0 + W / 2) - cHalf - gapC - hx0)), L * 0.85);
   if(sd) image(ctx, 'side', hx0 + sd[0] / 2, cy, sd[0], sd[1]);
   else if(has(S.year)){
     const lh = 22 * sc;

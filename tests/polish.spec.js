@@ -25,7 +25,7 @@ test('about: author credit, privacy, licenses', async ({page}) => {
   await expect(dlg).toBeVisible();
   await expect(dlg).not.toContainText('رامي');                     // the owner asked not to show his name
   await expect(dlg).toContainText('SIL Open Font License');
-  await expect(dlg.locator('#ver')).toHaveText('2.0.1');
+  await expect(dlg.locator('#ver')).toHaveText('2.0.2');
   await expect(dlg.locator('.standalone')).toBeHidden();           // the single file does not link to itself
   await page.screenshot({path:'tests/__output__/ui6-about.png'});
   await page.keyboard.press('Escape');
