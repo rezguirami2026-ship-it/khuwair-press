@@ -20,7 +20,7 @@ for(const c of cases){
     return kp.render(c.px || (c.type === 'cert' ? 1600 : 1100), 0, true);
   }, c);
   imgs.push(PNG.sync.read(Buffer.from(r.url.split(',')[1], 'base64')));
-  console.log(c.type, c.layout, 'over:', r.over);
+  console.log(c.type, c.layout, 'over:', r.over); if(c.boxes) console.log(r.boxes.filter(b => c.boxes.includes(b.name)).map(b => b.name + ' ' + [b.x, b.y, b.w, b.h].map(v => v.toFixed(0)).join(',')).join(' | '));
 }
 const s = +scale, g = 12, ws = imgs.map(i => Math.round(i.width * s)), hs = imgs.map(i => Math.round(i.height * s));
 const perRow = Math.min(imgs.length, Math.max(1, Math.floor(2400 / (Math.max(...ws) + g))));

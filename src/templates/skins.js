@@ -10,7 +10,7 @@ import { rr, paper } from '../render/shapes.js';
 import { pattern } from '../ornaments/patterns.js';
 import { frame, fineFrame, guillocheFrame, cornerFrame, girihBand } from '../ornaments/frames.js';
 import { rosette, medallion, starPoly } from '../ornaments/stars.js';
-import { crenellation, archFrame } from '../ornaments/oman.js';
+import { crenellation, archFrame, archRise } from '../ornaments/oman.js';
 import { ornDivider, seal, awardBadge } from '../ornaments/awards.js';
 import { cornerSash, laurelBadge, archOrnament, fleuronRule, cornerRosette } from '../ornaments/royal.js';
 import { goldGradient } from '../ornaments/core.js';
@@ -101,7 +101,13 @@ export const SKINS = {
     emblem(ctx, cx, cy, r, th){ rosette(ctx, cx, cy, r, 8, O(th, {layers:2, bg:env.ink ? '#FFFFFF' : this.bg})); },
     divider(ctx, cx, y, half, th){ ornDivider(ctx, cx, y, half, O(th, {style:'knot', size:9, bg:env.ink ? '#FFFFFF' : this.bg})); },
     award(ctx, cx, cy, r, th){ rosette(ctx, cx, cy, r, 8, O(th, {layers:2, bg:env.ink ? '#FFFFFF' : this.bg})); },
-    hero(ctx, x0, y0, x1, y1, th){ archFrame(ctx, x0, y0, x1 - x0, y1 - y0, O(th, {kind:'scalloped', spring:Math.min(0.5, 120 / (y1 - y0)), gap:9})); },
+    hero(ctx, x0, y0, x1, y1, th){
+      const spring = Math.min(0.5, 120 / (y1 - y0)), rise = archRise(x1 - x0, y1 - y0, 'scalloped', spring);
+      archFrame(ctx, x0, y0, x1 - x0, y1 - y0, O(th, {kind:'scalloped', spring, gap:9}));
+      mark('~arch', x0, y0 - rise, x1 - x0, rise);   // the lobes rise above the arch's nominal top
+    },
+    /** room the arch's lobes need above its nominal top, for a hero w wide (spring line 120 below the top) */
+    heroRise(w){ return archRise(w, 300, 'scalloped', 0.4); },
     rule(ctx, x0, x1, y, th){ ornDivider(ctx, (x0 + x1) / 2, y + 2, (x1 - x0) / 2, O(th, {style:'diamonds', size:5, bg:env.ink ? '#FFFFFF' : this.bg})); },
     tone:{title:'primary', name:'primary'}
   },
@@ -132,7 +138,7 @@ export const SKINS = {
       mark('~sash', 0, 0, a * 0.42, b * 0.42); mark('~sash', W - a * 0.62 * 0.42, H - b * 0.62 * 0.42, a * 0.62 * 0.42, b * 0.62 * 0.42);
       const p = land ? 60 : 78;
       // the header's left column starts after the top-left sash and badge
-      return {x0:p, y0:land ? 56 : 74, x1:W - p, y1:H - (land ? 56 : 92), hx0:land ? 236 : 260, sigInset:land ? 200 : 190};
+      return {x0:p, y0:land ? 56 : 74, x1:W - p, y1:H - (land ? 56 : 92), hx0:land ? 236 : 260, hxLogo:land ? 202 : 260, sigInset:land ? 200 : 190};
     },
     emblem(ctx, cx, cy, r, th){ archOrnament(ctx, cx, cy + r * 0.62, r * 3.4, {size:r * 1.15, color:th.primary, ink:env.ink, bg:env.ink ? '#FFFFFF' : this.bg}); },
     divider(ctx, cx, y, half, th){ fleuronRule(ctx, cx, y, half * 1.25, {color:th.primary, ink:env.ink}); },

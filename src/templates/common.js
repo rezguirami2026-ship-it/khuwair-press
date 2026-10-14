@@ -56,40 +56,39 @@ const fitSize = (key, mw, mh) => {
   const k = Math.min(mw / iw, mh / ih);
   return [iw * k, ih * k];
 };
-/** Header of logos: school logo on the right (instead of the school lines), the centre logo with the school year
- *  under it, the side logo on the left (e.g. Oman Vision 2040). Logos sit flush with the outer edges. */
+/** Header of logos: school logo on the right (instead of the school lines), the centre logo, the side logo on the left
+ *  (e.g. Oman Vision 2040). The two side logos sit at equal distances from the centre: the left slot starts where the
+ *  skin's corner ornament ends (hx0) and the right slot mirrors it. No school year in this header. */
 function logoHeader(ctx, skin, th, box, sc, o){
-  const S = env.state.school, W = box.x1 - box.x0, hx0 = box.hx0 == null ? box.x0 : box.hx0;
-  const L = 112 * sc, top = box.y0 - 6 * sc, cy = top + L / 2, colW = W * 0.3;
+  // a skin may let logos (shorter than its header text column) start closer to its corner ornament
+  const S = env.state.school, W = box.x1 - box.x0, hx0 = box.hxLogo != null ? box.hxLogo : box.hx0 != null ? box.hx0 : box.x0;
+  const L = 132 * sc, top = box.y0 - 8 * sc, cy = top + L / 2, cx = (box.x0 + box.x1) / 2;
+  const cs = fitSize('center', W * 0.26, L), cHalf = cs ? cs[0] / 2 : 40 * sc;
+  const span = cx - hx0, Sw = Math.max(70 * sc, Math.min(W * 0.3, span - cHalf - 28 * sc)), D = span - Sw / 2;
   // right: the school logo, or the school lines when only the side logo was given
-  const rs = fitSize('school', colW * 0.75, L);
-  if(rs) image(ctx, 'school', box.x1 - rs[0] / 2, cy, rs[0], rs[1]);
+  const rs = fitSize('school', Sw, L);
+  if(rs) image(ctx, 'school', cx + D, cy, rs[0], rs[1]);
   else {
     const ls = [S.l1, S.l2, S.l3].filter(has), lh = 22 * sc;
     ls.forEach((l, i) => {
       const last = i === ls.length - 1;
-      line(ctx, l, box.x1, box.y0 + (i + 1) * lh, colW, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
+      line(ctx, l, box.x1, box.y0 + (i + 1) * lh, W * 0.3, {size:(last ? 16.5 : 15.5) * sc, min:10 * sc, fam:FONTS.sans, w:last ? 800 : 700, color:th.ink, align:'right', name:'header'});
     });
   }
   // left: the side logo, or the school year in its usual place
-  // the side logo may grow up to the centre logo's actual edge (wide logos like Oman Vision 2040 need the room)
-  const yearMid = !!env.logos.side && has(S.year), cs = fitSize('center', W * 0.24, L - (yearMid ? 24 * sc : 0));
-  const cHalf = cs ? cs[0] / 2 : 40 * sc, gapC = 26 * sc;
-  const sd = fitSize('side', Math.max(60 * sc, Math.min(colW * 0.9, (box.x0 + W / 2) - cHalf - gapC - hx0)), L * 0.85);
-  if(sd) image(ctx, 'side', hx0 + sd[0] / 2, cy, sd[0], sd[1]);
+  const sd = fitSize('side', Sw, L * 0.9);
+  if(sd) image(ctx, 'side', cx - D, cy, sd[0], sd[1]);
   else if(has(S.year)){
     const lh = 22 * sc;
-    line(ctx, 'العام الدراسي', hx0, box.y0 + lh, colW * 0.8, {size:15 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
-    line(ctx, S.year, hx0, box.y0 + 2 * lh, colW * 0.8, {size:15.5 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
+    line(ctx, 'العام الدراسي', hx0, box.y0 + lh, W * 0.24, {size:15 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
+    line(ctx, S.year, hx0, box.y0 + 2 * lh, W * 0.24, {size:15.5 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, align:'left', name:'header'});
   }
-  // centre: the centre logo (or the skin's emblem), with the school year under it when the left side holds a logo
-  const cx = (box.x0 + box.x1) / 2, yh = yearMid ? 24 * sc : 0, mh = L - yh;
-  if(!image(ctx, 'center', cx, top + mh / 2, W * 0.24, mh) && o.emblem){
-    const r = Math.min(34 * sc, mh / 2 - 2 * sc);
-    skin.emblem(ctx, cx, top + mh / 2, r, th); mark('emblem', cx - r, top + mh / 2 - r, 2 * r, 2 * r);
+  // centre: the centre logo, or the skin's emblem
+  if(!image(ctx, 'center', cx, cy, W * 0.26, L) && o.emblem){
+    const r = 34 * sc;
+    skin.emblem(ctx, cx, cy, r, th); mark('emblem', cx - r, cy - r, 2 * r, 2 * r);
   }
-  if(yearMid) line(ctx, 'العام الدراسي ' + S.year, cx, top + L + 2 * sc, W * 0.3, {size:15 * sc, min:10 * sc, fam:FONTS.sans, w:700, color:th.ink, name:'header'});
-  return top + L + (yearMid ? 10 : 6) * sc;
+  return top + L + 6 * sc;
 }
 
 /** Signature: label, optional signature image, name — or a dotted line to sign by hand when no name is given.

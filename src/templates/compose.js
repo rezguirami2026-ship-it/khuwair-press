@@ -20,7 +20,7 @@ export function certificate(skin, opt){
     const W = 1000, H = 707, S = env.state.school;
     const box = skin.page(ctx, W, H, th);
     if(skin.cornerAward){ skin.cornerAward(ctx, W, H, th); mark('award', 72, 72, 112, 136); }
-    const hb = header(ctx, skin, th, box, 1, {emblem:!skin.hero});
+    const hb = header(ctx, skin, th, box, 1, {emblem:!skin.hero}), logoTop = !!(env.logos.school || env.logos.side);
     // bottom zone — right: an optional extra signer, otherwise the date; centre: the award; left: director + stamp
     const sigImg = !!env.logos.signature, extra = has(d.teacherLabel) || has(d.teacherName);
     const rightLabel = extra ? d.teacherLabel : (has(d.date) ? 'التاريخ' : ''), rightValue = extra ? d.teacherName : d.date;
@@ -48,7 +48,7 @@ export function certificate(skin, opt){
       txt(skin, th, 'reason', d.reason, {k:K(d, 'reason'), size:21, min:13.5, lines:3, lh:1.65, gap:skin.hero ? 1.6 : 0.9, width:660}),
       extra && has(d.date) ? txt(skin, th, 'small', 'التاريخ: ' + d.date, {k:K(d, 'date'), size:14, min:11, lines:1, lh:1.4, gap:0.6, name:'date'}) : null
     ].filter(Boolean);
-    const L = stack(ctx, blocks, {x0:box.x0 + 10, x1:box.x1 - 10, top:hb + 10, bottom:Math.min(sigTop, awardTop) - 10, rhythm:18, valign:'center'});
+    const L = stack(ctx, blocks, {x0:box.x0 + 10, x1:box.x1 - 10, top:hb + 10 + (skin.hero && logoTop ? skin.heroRise(heroW + 36) : 0), bottom:Math.min(sigTop, awardTop) - 10, rhythm:18, valign:'center'});
     if(skin.hero){
       const t = L.items.find(i => i.b.name === 'archTop'), n = L.items.find(i => i.b.name === 'name');
       if(t && n) skin.hero(ctx, cx - heroW / 2 - 18, t.top + 4, cx + heroW / 2 + 18, n.top + n.h + 14, th);
@@ -251,7 +251,7 @@ export function invitation(skin, opt){
       detailsBlock(detRows(d), skin, th, opt.details),
       Object.assign(txt(skin, th, 'strong', d.closing, {k:K(d, 'closing'), size:34, min:18, lines:2, lh:1.5, gap:1.2, name:'closing'}), {color:th.primary})
     ].filter(Boolean);
-    const L = stack(ctx, blocks, {x0:box.x0 + 24, x1:box.x1 - 24, top:y + 10, bottom:sigTop - 24, rhythm:28, valign:'center', maxGap:1.9});
+    const L = stack(ctx, blocks, {x0:box.x0 + 24, x1:box.x1 - 24, top:y + 10 + (skin.hero && logoTop ? skin.heroRise(heroW + 48) : 0), bottom:sigTop - 24, rhythm:28, valign:'center', maxGap:1.9});
     if(skin.hero){
       const t = L.items.find(i => i.b.name === 'archTop'), o = L.items.find(i => i.b.name === 'occasion') || L.items.find(i => i.b.name === 'intro');
       if(t && o) skin.hero(ctx, cx - heroW / 2 - 24, t.top + 6, cx + heroW / 2 + 24, o.top + o.h + 22, th);

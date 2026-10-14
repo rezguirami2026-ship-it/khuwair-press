@@ -66,6 +66,18 @@ export function archPath(ctx, x, y, w, h, kind = 'pointed', spring = 0.32){
   ctx.lineTo(x + w, y + h);
 }
 
+/** How far an arch path rises above its nominal top y (scalloped lobes bulge outward); sampled, in page units. */
+export function archRise(w, h, kind = 'pointed', spring = 0.32){
+  let minY = 0, px = 0, py = 0;
+  const pt = (x, y) => { px = x; py = y; minY = Math.min(minY, y); };
+  const rec = {moveTo:pt, lineTo:pt,
+    quadraticCurveTo(cx, cy, x, y){ for(let t = 0; t <= 1; t += 0.05) minY = Math.min(minY, (1 - t) * (1 - t) * py + 2 * (1 - t) * t * cy + t * t * y); pt(x, y); },
+    bezierCurveTo(c1x, c1y, c2x, c2y, x, y){ for(let t = 0; t <= 1; t += 0.05){ const u = 1 - t; minY = Math.min(minY, u * u * u * py + 3 * u * u * t * c1y + 3 * u * t * t * c2y + t * t * t * y); } pt(x, y); },
+    arc(cx, cy, r, a0, a1){ for(let t = 0; t <= 1; t += 0.05) minY = Math.min(minY, cy + Math.sin(a0 + (a1 - a0) * t) * r); }};
+  archPath(rec, 0, 0, w, h, kind, spring);
+  return -minY;
+}
+
 /** Double-line arch frame with a keystone star — frames a title or a whole invitation. */
 export function archFrame(ctx, x, y, w, h, o){
   o = opts(Object.assign({kind:'pointed', spring:0.3, gap:10, keystone:true}, o));

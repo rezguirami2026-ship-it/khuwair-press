@@ -22,7 +22,8 @@ He may sell the tool to other schools, so school data must stay configurable. De
   - Boxes named `~…` are decoration keep-out zones: text may not enter them, but they may touch the edge.
 - Header logos (2026-10-14): a third upload slot `school` («شعار المدرسة»). When `school` or `side` is uploaded, `logoHeader()` in `common.js` takes over:
   - School logo on the right replaces the school lines; centre logo in the middle; side logo (e.g. Oman Vision 2040) on the left.
-  - The school year then moves under the centre logo.
+  - The owner asked (2026-10-14) for larger logos and no school year in this header. The side and school logos sit at equal distances from the centre: the left slot starts at `box.hxLogo` (or `hx0`), and the right one mirrors it.
+  - The heritage arch's scalloped lobes rise above its nominal top (`archRise()` in `ornaments/oman.js`, `~arch` mark). With logos, the stack starts lower by `skin.heroRise()`.
   - Invitations use the same three-logo header when `school` or `side` is uploaded (instead of the single centre logo or the arch keystone logo).
   - Uploads go through `cleanLogo()` in `ui/logos.js`: the white background touching the edge is flood-filled to transparent (white inside the logo stays), margins are cropped, and logos are kept up to 1000 px for sharp printing.
   - No official emblem is bundled. The owner uploads his own logo files.
