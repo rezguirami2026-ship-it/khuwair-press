@@ -32,6 +32,10 @@ He may sell the tool to other schools, so school data must stay configurable. De
   - `executive` «تنفيذي»: a coloured side panel on the right with a gold pattern and medallion. `~panel` is its keep-out zone.
   - `filigree` «نقش ذهبي»: a double gold frame with quarter-rosette corner pieces. `~corner` zones; `hx0`/`hx1` keep the header columns clear of them.
   - All three draw a faint watermark of the uploaded school logo (`watermark()` in `skins.js`).
+- School links (2026-10-14): `?school=<id>` loads `schools/<id>.json` (published next to the page by the site build) and fills only the logo slots that are still empty (`schoolFromLink()` in `ui/school.js`).
+  - This is how a school's logos reach every device without bundling them into the app.
+  - The owner's link is `?school=khuwair`. Its logos are the ones he uploaded, at his request.
+  - Tests: `tests/schoollink.spec.js`.
 - Class codes like 1/6 are drawn in typed order, read right to left (`classOrder` in `src/render/text.js`).
 
 ## Working with the owner

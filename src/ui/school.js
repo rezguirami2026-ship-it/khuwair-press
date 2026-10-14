@@ -30,6 +30,19 @@ export function applySettings(st, o){
   return '';
 }
 
+/** School link (?school=<id>): loads schools/<id>.json shipped with the site and fills the logo slots that are still
+ *  empty, so a school's logos appear on every device opened with its link. Logos the user set are never replaced. */
+export function schoolFromLink(done){
+  const id = new URLSearchParams(location.search).get('school');
+  if(!id || !/^[a-z0-9-]{1,40}$/.test(id)) return false;
+  fetch('schools/' + id + '.json', {cache:'no-cache'}).then(r => r.ok ? r.json() : null).then(o => {
+    if(!o || o.format !== FORMAT || !o.logos) return;
+    let n = 0;
+    for(const k of LOGO_KEYS) if(!state.logos[k] && o.logos[k] && isImage(o.logos[k])){ state.logos[k] = o.logos[k]; n++; }
+    if(n){ save(); done(); }
+  }).catch(() => {});
+  return true;
+}
 export function exportSettings(){
   const blob = new Blob([JSON.stringify(settingsOf(state), null, 1)], {type:'application/json'});
   const name = (state.school.l3 || 'المدرسة').replace(/[\\/:*?"<>|]+/g, ' ').trim();

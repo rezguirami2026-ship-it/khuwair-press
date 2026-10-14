@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 import { fileURLToPath } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
 const stub = fileURLToPath(new URL('./src/export/stub.js', import.meta.url));
@@ -18,6 +18,9 @@ function pwa(){
     generateBundle(_, bundle){
       for(const f of ['icon-192.png', 'icon-512.png', 'maskable-512.png'])
         this.emitFile({type:'asset', fileName:f, source:readFileSync(new URL('./pwa/' + f, import.meta.url))});
+      // school links (?school=<id>): each schools/<id>.json is published next to the page
+      for(const f of readdirSync(new URL('./schools/', import.meta.url)).filter(f => /^[a-z0-9-]+\.json$/.test(f)))
+        this.emitFile({type:'asset', fileName:'schools/' + f, source:readFileSync(new URL('./schools/' + f, import.meta.url))});
       this.emitFile({type:'asset', fileName:'manifest.webmanifest', source:JSON.stringify({
         name:'مطبعة الخوير', short_name:'مطبعة الخوير', description:'صمّم مطبوعات المدرسة ونزّلها جاهزة للطباعة',
         lang:'ar', dir:'rtl', start_url:'./', scope:'./', display:'standalone', background_color:'#ECEFEA', theme_color:'#1E5B47',

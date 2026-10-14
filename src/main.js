@@ -11,7 +11,7 @@ import { logoImg, setLogoImg, refreshLogos, bindLogos } from './ui/logos.js';
 import { schedule, changed, restored, renderPreview, bindPreview } from './ui/preview.js';
 import { initHistory, undo, redo, canUndo, canRedo } from './ui/history.js';
 import { $ } from './ui/dom.js';
-import { exportSettings, importSettings, isFirstRun, showWelcome } from './ui/school.js';
+import { exportSettings, importSettings, isFirstRun, showWelcome, schoolFromLink } from './ui/school.js';
 import { buildPanel, bindPanel, fillSchool, thumbs } from './ui/panel.js';
 import { onEdit } from './ui/preview.js';
 import { bindActions } from './ui/actions.js';
@@ -50,7 +50,9 @@ document.addEventListener('input', () => setTimeout(histButtons, 700));
 const refreshAll = () => { for(const k of Object.keys(logoImg)) setLogoImg(k, state.logos[k]); fillSchool(); refreshLogos(); buildPanel(); changed(); };
 $('#exportSchool').addEventListener('click', exportSettings);
 $('#importSchool').addEventListener('click', () => importSettings(refreshAll));
-if(firstRun && (!/[?&]test\b/.test(location.search) || /[?&]firstrun\b/.test(location.search))) showWelcome(refreshAll);
+// a school's own link (?school=<id>) brings its logos to any device; the welcome screen is then not needed
+const linked = schoolFromLink(refreshAll);
+if(firstRun && !linked && (!/[?&]test\b/.test(location.search) || /[?&]firstrun\b/.test(location.search))) showWelcome(refreshAll);
 document.addEventListener('click', () => setTimeout(histButtons, 700));
 
 if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', schedule);
