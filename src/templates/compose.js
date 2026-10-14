@@ -44,7 +44,7 @@ export function certificate(skin, opt){
       txt(skin, th, 'name', name, {k:K(d, 'names'), size:52, min:24, lines:1, lh:1.32, gap:0.5, width:heroW || 680}),
       skin.hero ? null : gfx('rule', 8, (c, x0, x1, top) => skin.rule(c, (x0 + x1) / 2 - 170, (x0 + x1) / 2 + 170, top + 2, th), {gap:0.1, mark:false}),
       has(rec.rank) ? Object.assign(txt(skin, th, 'strong', rankText(rec.rank), {size:25, min:15, lines:1, lh:1.4, gap:0.5, name:'rank'}), {color:th.primary}) : null,
-      has(cls) ? txt(skin, th, 'small', 'الصف: ' + cls, {size:17, min:12, lines:1, lh:1.4, gap:0.5}) : null,
+      has(cls) ? Object.assign(txt(skin, th, 'small', 'الصف: ' + cls, {k:K(d, 'cls'), size:20, min:12, lines:1, lh:1.4, gap:0.5, name:'cls'}), {color:th.ink, w:700}) : null,
       txt(skin, th, 'reason', d.reason, {k:K(d, 'reason'), size:21, min:13.5, lines:3, lh:1.65, gap:skin.hero ? 1.6 : 0.9, width:660}),
       extra && has(d.date) ? txt(skin, th, 'small', 'التاريخ: ' + d.date, {k:K(d, 'date'), size:14, min:11, lines:1, lh:1.4, gap:0.6, name:'date'}) : null
     ].filter(Boolean);

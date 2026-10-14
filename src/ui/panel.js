@@ -96,7 +96,7 @@ export function thumbs(delay){
 }
 /** Text elements whose size the user can change (new templates only; v1 layouts keep their fixed sizes). */
 const SIZE_KEYS = {
-  cert:['title', 'intro', 'names', 'reason', 'date'],
+  cert:['title', 'intro', 'names', 'cls', 'reason', 'date'],
   notice:['kicker', 'title', 'greeting', 'body', 'note', 'closing'],
   poster:['gKicker', 'gTitle', 'gSub', 'gPoints', 'gFooter', 'hTitle', 'hSub', 'hNames', 'hFooter'],
   invite:['heading', 'lead', 'occasion', 'desc', 'closing']
